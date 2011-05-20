@@ -1,0 +1,103 @@
+--- mozilla-central-bb9089ae2322/nsprpub/pr/src/io/prlog.c	2011-01-21 16:40:14.000000000 -0700
++++ mozilla-central-bb9089ae2322.bak/nsprpub/pr/src/io/prlog.c	2011-01-31 13:53:30.000000000 -0700
+@@ -42,7 +42,7 @@
+ #include "prprf.h"
+ #include <string.h>
+ #ifdef ANDROID
+-#include <android/log.h>
++//#include <android/log.h>
+ #endif
+ 
+ /*
+@@ -135,7 +135,7 @@
+     if (fd == _pr_stderr) {                                  \
+         char savebyte = buf[nb];                             \
+         buf[nb] = '\0';                                      \
+-        __android_log_write(ANDROID_LOG_INFO, "PRLog", buf); \
++        printf("PRLog: %s", buf);                            \
+         buf[nb] = savebyte;                                  \
+     } else {                                                 \
+         PR_Write(fd, buf, nb);                               \
+--- mozilla-central-bb9089ae2322/js/src/jscntxt.cpp	2011-01-21 16:40:14.000000000 -0700
++++ mozilla-central-bb9089ae2322.bak/js/src/jscntxt.cpp	2011-01-31 13:49:52.000000000 -0700
+@@ -46,7 +46,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #ifdef ANDROID
+-# include <android/log.h>
++//# include <android/log.h>
+ # include <fstream>
+ # include <string>
+ #endif  // ANDROID
+@@ -2218,12 +2218,14 @@
+     // Check for the known-bad kernel version (2.6.29).
+     std::ifstream osrelease("/proc/sys/kernel/osrelease");
+     std::getline(osrelease, line);
+-    __android_log_print(ANDROID_LOG_INFO, "Gecko", "Detected osrelease `%s'",
+-                        line.c_str());
++//    __android_log_print(ANDROID_LOG_INFO, "Gecko", "Detected osrelease `%s'",
++//                        line.c_str());
++    printf("Gecko: Detected osrelease `%s'", line.c_str());
+ 
+     if (line.npos == line.find("2.6.29")) {
+         // We're using something other than 2.6.29, so the JITs should work.
+-        __android_log_print(ANDROID_LOG_INFO, "Gecko", "JITs are not broken");
++//        __android_log_print(ANDROID_LOG_INFO, "Gecko", "JITs are not broken");
++        printf("Gecko: JITs are not broken");
+         return false;
+     }
+ 
+@@ -2243,8 +2245,9 @@
+             };
+             for (const char** hw = &blacklist[0]; *hw; ++hw) {
+                 if (line.npos != line.find(*hw)) {
+-                    __android_log_print(ANDROID_LOG_INFO, "Gecko",
+-                                        "Blacklisted device `%s'", *hw);
++//                    __android_log_print(ANDROID_LOG_INFO, "Gecko",
++//                                        "Blacklisted device `%s'", *hw);
++                    printf("Gecko: Blacklisted device `%s'", *hw);
+                     broken = true;
+                     break;
+                 }
+@@ -2254,8 +2257,9 @@
+         std::getline(cpuinfo, line);
+     } while(!cpuinfo.fail() && !cpuinfo.eof());
+ 
+-    __android_log_print(ANDROID_LOG_INFO, "Gecko", "JITs are %sbroken",
+-                        broken ? "" : "not ");
++//    __android_log_print(ANDROID_LOG_INFO, "Gecko", "JITs are %sbroken",
++//                        broken ? "" : "not ");
++    printf("Gecko: JITs are %sborken", broken ? "" : "not ");
+ 
+     return broken;
+ #endif  // ifndef ANDROID
+--- mozilla-central/nsprpub/pr/src/Makefile.in.bak	2011-02-02 15:39:53.000000000 -0700
++++ mozilla-central/nsprpub/pr/src/Makefile.in	2011-02-02 15:40:07.000000000 -0700
+@@ -205,9 +205,9 @@
+ OS_LIBS		= ws2.lib
+ endif
+ 
+-ifeq ($(OS_TARGET),Android)
+-OS_LIBS		+= -llog
+-endif
++#ifeq ($(OS_TARGET),Android)
++#OS_LIBS		+= -llog
++#endif
+ 
+ ifeq ($(OS_TARGET),MacOSX)
+ OS_LIBS		= -framework CoreServices -framework CoreFoundation
+--- mozilla-central/js/src/configure.in.bak	2011-02-02 15:41:20.000000000 -0700
++++ mozilla-central/js/src/configure.in	2011-02-02 15:41:43.000000000 -0700
+@@ -291,11 +291,10 @@
+     CFLAGS="-mandroid -I$android_platform/usr/include -msoft-float -fno-short-enums -fno-exceptions -march=armv5te -mthumb-interwork $CFLAGS"
+     CXXFLAGS="-mandroid -I$android_platform/usr/include -msoft-float -fno-short-enums -fno-exceptions -march=armv5te -mthumb-interwork $CXXFLAGS"
+ 
+-    dnl Add -llog by default, since we use it all over the place.
+     dnl Add --allow-shlib-undefined, because libGLESv2 links to an
+     dnl undefined symbol (present on the hardware, just not in the
+     dnl NDK.)
+-    LDFLAGS="-mandroid -L$android_platform/usr/lib -Wl,-rpath-link=$android_platform/usr/lib --sysroot=$android_platform -llog -Wl,--allow-shlib-undefined $LDFLAGS"
++    LDFLAGS="-mandroid -L$android_platform/usr/lib -Wl,-rpath-link=$android_platform/usr/lib --sysroot=$android_platform -Wl,--allow-shlib-undefined $LDFLAGS"
+ 
+     dnl prevent cross compile section from using these flags as host flags
+     if test -z "$HOST_CPPFLAGS" ; then
