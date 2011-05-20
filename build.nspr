@@ -1,0 +1,18 @@
+#!/bin/bash -x
+#
+
+source $COUCH_ANDROID_HOME/software/android/scripts/env
+ANDROID_NDK=$COUCH_ANDROID_HOME/software/android/android-ndk-r4c
+
+cd mozilla-central/nsprpub
+
+./configure \
+--target=arm-android-eabi \
+--with-android-ndk=$ANDROID_NDK \
+--with-android-platform=$ANDROID_NDK/build/platforms/android-8/arch-arm \
+--enable-strip
+
+make -s
+
+# Remove shared libraries so that Couch is built with the static ones
+rm dist/lib/*so

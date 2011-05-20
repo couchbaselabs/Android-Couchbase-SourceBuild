@@ -1,0 +1,26 @@
+#!/bin/bash -x
+#
+
+if [ -z "$1" ]; then
+    echo "Run as root:"
+    echo "# m-a prepare"
+    echo "# apt-get install bison curl flex gperf zip"
+    echo
+    echo "Then:"
+    echo "$ sh build.android go"
+    exit
+fi
+
+cd $COUCH_ANDROID_ROOT/software/android/sdk/sources
+
+repo init -b froyo
+repo sync
+
+source build/envsetup.sh
+
+export JAVA_HOME=$COUCH_ANDROID_ROOT/software/jdk1.5.0_22
+export ANDROID_JAVA_HOME=$JAVA_HOME
+export PATH=$JAVA_HOME/bin:$PATH
+
+lunch
+make -s

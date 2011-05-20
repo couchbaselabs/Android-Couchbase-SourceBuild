@@ -1,0 +1,31 @@
+#!/bin/bash -x
+#
+
+rm -rf $ANDROID_COUCH_HOME/couchdb
+rm -rf $ANDROID_COUCH_HOME/sdcard/*
+git clone -b android git://github.com/daleharvey/couchdb.git
+cd couchdb 
+git checkout 1.0.2
+
+# Android Build Support from https://github.com/apage43/couchdb/tree/0.11.x-android
+# Mozilla JS compatibility by chrisccoulson from jsapi@irc.mozilla.org
+# Fixes for Android by matt.adams-couch@radicaldynamic.com
+./bootstrap
+
+source $ANDROID_COUCH_HOME/software/android/scripts/env
+ANDROID_SDK=$ANDROID_COUCH_HOME/software/android/sdk
+
+ERL=$(pwd)/../otp/bootstrap/bin/erl \
+ERLC=$(pwd)/../otp/bootstrap/bin/erlc \
+CC=agcc \
+./configure \
+--host=arm-eabi \
+--prefix=$ANDROID_COUCH_HOME/sdcard/Android/data/$ANDROID_APP_NAME/couchdb \
+--with-android=$ANDROID_SDK/sources \
+--with-android-curl=$(pwd)/../curl-7.20.0 \
+--with-erlang=$(pwd)/../otp_rel/usr/include \
+--with-js-include=$(pwd)/../mozilla-central/js/src/dist/include \
+--with-js-lib="$(pwd)/../mozilla-central/js/src"
+
+make -s
+make install
