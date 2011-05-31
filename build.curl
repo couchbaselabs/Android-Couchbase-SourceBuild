@@ -1,5 +1,12 @@
 #!/bin/bash -x 
 #
+
+source scripts/env
+
+cd $COUCH_ANDROID_HOME
+mkdir -p build/deps/curl
+cd build/deps/curl
+
 VERSION=7.20.0
 
 [[ -f curl-$VERSION.tar.bz2 ]] || wget http://curl.haxx.se/download/curl-$VERSION.tar.bz2
@@ -8,8 +15,7 @@ rm -rf curl-$VERSION
 tar jxf curl-$VERSION.tar.bz2
 cd curl-$VERSION
 
-source $COUCH_ANDROID_HOME/software/android/scripts/env
-ANDROID_SDK=$COUCH_ANDROID_HOME/software/android/sdk
+ANDROID_SDK=build/deps/android/sdk
 
 CPPFLAGS="-I$ANDROID_SDK/sources/external/openssl/include -I$ANDROID_SDK/sources/external/zlib" \
 CC=agcc \
