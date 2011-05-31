@@ -1,10 +1,19 @@
 #!/bin/bash -x
 #
 
-source $COUCH_ANDROID_HOME/software/android/scripts/env
-ANDROID_NDK=$COUCH_ANDROID_HOME/software/android/android-ndk-r4c
+source scripts/env
 
-cd mozilla-central/nsprpub
+cd $COUCH_ANDROID_HOME/build/deps/ndk
+
+NDK=android-ndk-r4c-0moz3
+
+[[ -f $NDK.tar.bz2 ]] || wget http://ftp.mozilla.org/pub/mozilla.org/mobile/source/$NDK.tar.bz2
+
+tar -jxf $NDK.tar.bz2
+
+ANDROID_NDK=$COUCH_ANDROID_HOME/build/deps/ndk/android-ndk-r4c
+
+cd $COUCH_ANDROID_HOME/build/deps/mozilla-current/mozilla-central/nsprpub
 
 ./configure \
 --target=arm-android-eabi \
