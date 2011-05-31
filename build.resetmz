@@ -12,11 +12,11 @@ cd build/deps/mozilla-current
 
 HGREV=bb9089ae2322
 
-[[ -f mozilla-central-$HGREV.tar.bz2 ]] || wget http://hg.mozilla.org/mozilla-central/archive/$HGREV.tar.bz2
+[[ -f $HGREV.tar.bz2 ]] || wget http://hg.mozilla.org/mozilla-central/archive/$HGREV.tar.bz2
 
 rm -rf mozilla-central mozilla-central-$HGREV
 tar -jxf $HGREV.tar.bz2
-ln -s $HGREV mozilla-central
+ln -s mozilla-central-$HGREV mozilla-central
 
 cd mozilla-central
 
