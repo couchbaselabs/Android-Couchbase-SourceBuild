@@ -4,6 +4,12 @@
 # Almost worked...
 #HGREV=21e90d198613
 
+source scripts/env
+
+cd $COUCH_ANDROID_HOME
+mkdir -p build/deps/mozilla-current
+cd build/deps/mozilla-current
+
 HGREV=bb9089ae2322
 
 [[ -f mozilla-central-$HGREV.tar.bz2 ]] || wget http://hg.mozilla.org/mozilla-central/archive/$HGREV.tar.bz2
@@ -17,4 +23,4 @@ cd mozilla-central
 # Use of __android_log_print and __android_log_write requires liblog.so from our
 # toolchain.  However, llog also has a dependency on libstdc++.so which our toolchain
 # DOES NOT have so we need to substitute for something less Androidy (apologies).
-patch -p1 < ../mozilla-central.patch
+patch -p1 < $COUCH_ANDROID_HOME/patches/mozilla-central.patch
