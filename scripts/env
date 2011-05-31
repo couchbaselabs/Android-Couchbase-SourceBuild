@@ -1,5 +1,7 @@
 # Important paths for Android binaries
  
+export COUCH_ANDROID_HOME=$(pwd)
+
 paths="
 $(pwd)/scripts
 "
