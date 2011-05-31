@@ -9,17 +9,14 @@ It is currently aimed to work on Ubuntu 10.4, other platforms should be possible
 
 Dependencies
 ============
-Compiling android requires the JDK
-    $ sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu dapper main multiverse"
-    $ sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu dapper-updates main multiverse"
-    $ sudo apt-get update
-    $ sudo apt-get install sun-java5-jdk
-Should be sufficient, you can find more complete instructions @ http://source.android.com/source/initializing.html
+Compiling android requires the JDK and various system dependancies, you can find these listed @ http://source.android.com/source/initializing.html
 
-You need to ensure $JAVA_HOME is set before building android
+You need to ensure $JAVA_HOME is set before building android.
 
 Usage
 =====
     $ git clone git@github.com:daleharvey/build-android-couch.git
     $ cd build-android-couch
     $ ./build.android
+    $ ./build.curl
+    $ ./build.resetmz
