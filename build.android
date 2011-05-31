@@ -1,10 +1,9 @@
 #!/bin/bash -x
 #
 
-cd $COUCH_ANDROID_HOME
-
 source scripts/env
 
+cd $COUCH_ANDROID_HOME
 mkdir -p build/deps/android
 cd build/deps/android
 
