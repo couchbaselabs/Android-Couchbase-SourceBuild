@@ -1,11 +1,7 @@
 # Important paths for Android binaries
+ 
 paths="
-$HOME/software/android/scripts
-$HOME/software/android/other/apk
-$HOME/software/android/sdk/platform-tools
-$HOME/software/android/sdk/platforms/android-8/tools
-$HOME/software/android/sdk/sources/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin
-$HOME/software/android/sdk/tools
+$(pwd)/scripts
 "
 
 for i in $paths
