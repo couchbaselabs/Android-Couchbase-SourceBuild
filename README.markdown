@@ -11,8 +11,6 @@ Dependencies
 ============
 Compiling android requires the JDK and various system dependancies, you can find these listed @ http://source.android.com/source/initializing.html
 
-You need to ensure $JAVA_HOME is set before building android.
-
 Usage
 =====
     $ git clone git@github.com:daleharvey/build-android-couch.git
