@@ -1,0 +1,19 @@
+#!/bin/bash -x
+#
+
+source scripts/env
+
+cd $COUCH_ANDROID_HOME/build/deps
+
+rm -rf otp
+rm -rf otp_rel
+git clone git://github.com/daleharvey/otp.git -b android
+cd otp
+
+export ANDROID_SDK=$HOME/build/deps/android/sdk
+export ANDROID_SYS_ROOT=$ANDROID_SDK/sources
+
+./otp_build autoconf
+./otp_build configure --xcomp-conf=xcomp/erl-xcomp-android.conf
+./otp_build boot -a
+./otp_build release -a $(pwd)/../otp_rel
