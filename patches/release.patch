@@ -1,0 +1,196 @@
+diff -ru release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/bin/couchdb release/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/bin/couchdb
+--- release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/bin/couchdb	2011-02-05 01:26:00.000000000 -0700
++++ release/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/bin/couchdb	2011-02-08 16:42:00.000000000 -0700
+@@ -12,6 +12,9 @@
+ # License for the specific language governing permissions and limitations under
+ # the License.
+ 
++export HOME=/data/data/com.radicaldynamic.groupinform
++export LD_LIBRARY_PATH=$HOME/erlang/erts-5.7.5/bin:$HOME/couchdb/bin:$HOME/couchdb/lib/couchdb/bin
++export PATH=$HOME/erlang/bin:$HOME/couchdb/bin:$PATH
+ BACKGROUND=false
+ DEFAULT_CONFIG_DIR=/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/etc/couchdb/default.d
+ DEFAULT_CONFIG_FILE=/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/etc/couchdb/default.ini
+@@ -222,8 +225,8 @@
+         touch $PID_FILE
+         interactive_option="+Bd -noinput"
+     fi
+-    command="/home/matt/rdinc/projects/groupcomplete/couch/android-build/couchdb/../otp/bootstrap/bin/erl $interactive_option $ERL_START_OPTIONS \
+-        -env ERL_LIBS /sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/lib/couchdb/erlang/lib -couch_ini $start_arguments -s couch"
++    command="erl $interactive_option $ERL_START_OPTIONS \
++        -env ERL_LIBS /data/data/com.radicaldynamic.groupinform/couchdb/lib/couchdb/erlang/lib -couch_ini $start_arguments -s couch"
+     if test "$BACKGROUND" = "true" -a "$RECURSED" = "false"; then
+         $0 $background_start_arguments -b -r $RESPAWN_TIMEOUT -p $PID_FILE \
+             -o $STDOUT_FILE -e $STDERR_FILE -R &
+diff -ru release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/etc/couchdb/local.ini release/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/etc/couchdb/local.ini
+--- release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/etc/couchdb/local.ini	2011-02-05 01:26:00.000000000 -0700
++++ release/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/etc/couchdb/local.ini	2011-02-08 15:58:30.000000000 -0700
+@@ -5,23 +5,30 @@
+ ; overwritten on server upgrade.
+ 
+ [couchdb]
++database_dir = /sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/var/lib/couchdb
++view_index_dir = /sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/var/lib/couchdb
++util_driver_dir = /data/data/com.radicaldynamic.groupinform/couchdb/lib/couchdb
+ ;max_document_size = 4294967296 ; bytes
++uri_file = /sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/var/lib/couchdb/couch.uri
+ 
+ [httpd]
+-;port = 5984
+-;bind_address = 127.0.0.1
++port = 5985
++bind_address = 127.0.0.1
+ ; Uncomment next line to trigger basic-auth popup on unauthorized requests.
+ ;WWW-Authenticate = Basic realm="administrator"
+ 
++[log]
++file = /sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/var/log/couchdb/couch.log
++level = debug
++
+ [couch_httpd_auth]
+ ; If you set this to true, you should also uncomment the WWW-Authenticate line
+ ; above. If you don't configure a WWW-Authenticate header, CouchDB will send
+ ; Basic realm="server" in order to prevent you getting logged out.
+ ; require_valid_user = false
+ 
+-[log]
+-;level = debug
+-
++[query_servers]
++javascript = /data/data/com.radicaldynamic.groupinform/couchdb/bin/couchjs_wrapper /data/data/com.radicaldynamic.groupinform/couchdb/share/couchdb/server/main.js
+ 
+ ; To enable Virtual Hosts in CouchDB, add a vhost = path directive. All requests to
+ ; the Virual Host will be redirected to the path. In the example below all requests
+diff -ruN release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/bin/couchjs release/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/bin/couchjs
+--- release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/bin/couchjs	2011-02-05 01:26:00.000000000 -0700
++++ release/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/bin/couchjs	2011-02-05 01:37:12.000000000 -0700
+@@ -1,4 +1,4 @@
+-#! /bin/sh -e
++#!/system/bin/sh -e
+ 
+ # Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ # use this file except in compliance with the License. You may obtain a copy of
+@@ -63,7 +63,7 @@
+ }
+ 
+ run_couchjs () {
+-    exec /sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/lib/couchdb/bin/couchjs $@
++    exec LD_LIBRARY_PATH=/data/data/com.radicaldynamic.groupinform/couchdb/lib/couchdb/bin /data/data/com.radicaldynamic.groupinform/couchdb/lib/couchdb/bin/couchjs $@
+ }
+ 
+ parse_script_option_list () {
+diff -ruN release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/bin/couchjs_wrapper release/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/bin/couchjs_wrapper
+--- release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/bin/couchjs_wrapper	1969-12-31 17:00:00.000000000 -0700
++++ release/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/bin/couchjs_wrapper	2011-02-05 01:39:28.000000000 -0700
+@@ -0,0 +1,3 @@
++#!/system/bin/sh
++export LD_LIBRARY_PATH=/data/data/com.radicaldynamic.groupinform/couchdb/lib/couchdb/bin
++exec /data/data/com.radicaldynamic.groupinform/couchdb/lib/couchdb/bin/couchjs $@
+\ No newline at end of file
+diff -ruN release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable release/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable
+--- release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable	2011-02-05 01:26:00.000000000 -0700
++++ release/sdcard/Android/data/com.radicaldynamic.groupinform/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable	2011-02-05 01:48:49.000000000 -0700
+@@ -1,4 +1,4 @@
+-#! /bin/sh -e
++#!/system/bin/sh -e
+ 
+ # Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ # use this file except in compliance with the License. You may obtain a copy of
+diff -ruN release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/bin/erl release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/bin/erl
+--- release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/bin/erl	2011-02-05 01:28:07.000000000 -0700
++++ release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/bin/erl	2011-02-05 01:49:29.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/system/bin/sh
+ #
+ # %CopyrightBegin%
+ # 
+@@ -21,6 +21,7 @@
+ BINDIR=$ROOTDIR/erts-5.7.5/bin
+ EMU=beam
+ PROGNAME=`echo $0 | sed 's/.*\///'`
++export ERL_INETRC=$ROOTDIR/bin/erl_inetrc
+ export EMU
+ export ROOTDIR
+ export BINDIR
+diff -ruN release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/bin/erl_inetrc release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/bin/erl_inetrc
+--- release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/bin/erl_inetrc	1969-12-31 17:00:00.000000000 -0700
++++ release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/bin/erl_inetrc	2011-02-05 01:49:58.000000000 -0700
+@@ -0,0 +1,4 @@
++%% Use erlang's internal resolver. Native DNS on android is annoying
++{lookup, [file,dns]}.
++%% TODO: Not this,
++{nameserver, {8,8,8,8}}.
+\ No newline at end of file
+diff -ru release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/bin/start release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/bin/start
+--- release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/bin/start	2011-02-05 01:57:26.000000000 -0700
++++ release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/bin/start	2011-02-05 02:05:54.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/system/bin/sh
+ #
+ # %CopyrightBegin%
+ # 
+diff -ru release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/bin/start_erl release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/bin/start_erl
+--- release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/bin/start_erl	2011-02-05 01:57:26.000000000 -0700
++++ release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/bin/start_erl	2011-02-05 02:05:48.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/system/bin/sh
+ #
+ #
+ # %CopyrightBegin%
+diff -ru release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/erl release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/erl
+--- release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/erl	2011-02-05 01:57:26.000000000 -0700
++++ release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/erl	2011-02-05 02:06:04.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/system/bin/sh
+ #
+ # %CopyrightBegin%
+ # 
+diff -ru release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/erl.src release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/erl.src
+--- release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/erl.src	2011-02-05 01:23:30.000000000 -0700
++++ release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/erl.src	2011-02-05 02:06:01.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/system/bin/sh
+ #
+ # %CopyrightBegin%
+ # 
+diff -ru release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/start release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/start
+--- release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/start	2011-02-05 01:57:26.000000000 -0700
++++ release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/start	2011-02-05 02:06:09.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/system/bin/sh
+ #
+ # %CopyrightBegin%
+ # 
+diff -ru release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/start_erl.src release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/start_erl.src
+--- release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/start_erl.src	2011-02-05 01:23:30.000000000 -0700
++++ release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/start_erl.src	2011-02-05 02:06:06.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/system/bin/sh
+ #
+ #
+ # %CopyrightBegin%
+diff -ru release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/start.src release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/start.src
+--- release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/start.src	2011-02-05 01:23:30.000000000 -0700
++++ release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/erts-5.7.5/bin/start.src	2011-02-05 02:05:58.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/system/bin/sh
+ #
+ # %CopyrightBegin%
+ # 
+diff -ru release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/lib/inets-5.3/priv/bin/runcgi.sh release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/lib/inets-5.3/priv/bin/runcgi.sh
+--- release.bak/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/lib/inets-5.3/priv/bin/runcgi.sh	2011-02-05 01:22:58.000000000 -0700
++++ release/sdcard/Android/data/com.radicaldynamic.groupinform/erlang/lib/inets-5.3/priv/bin/runcgi.sh	2011-02-05 02:06:14.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/system/bin/sh
+ cd $1
+ shift
+ exec env "$@"
