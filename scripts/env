@@ -1,9 +1,12 @@
 # Important paths for Android binaries
- 
+
 export COUCH_ANDROID_HOME=$(pwd)
+export ANDROID_APP_NAME="com.test.couch"
 
 paths="
 $(pwd)/scripts
+$(pwd)/build/deps/android/other/apk
+$(pwd)/build/deps/android/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin/
 "
 
 for i in $paths
@@ -14,13 +17,3 @@ do
 done
 
 export PATH
-
-# Java stuff for building Android from sources
-echo "For building Android from sources:"
-echo "$ export JAVA_HOME=$HOME/software/jdk1.5.0_22"
-echo "$ export ANDROID_JAVA_HOME=\$JAVA_HOME"
-echo "$ export PATH=\$JAVA_HOME/bin:$PATH"
-echo "$ cd $HOME/software/android/sdk/sources"
-echo "$ source build/envsetup.sh"
-echo "$ lunch"
-echo "$ make"

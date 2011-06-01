@@ -1,6 +1,6 @@
 #!/bin/bash
 # Builds all components but does not finalize the release
-# 
+#
 
 for i in android curl resetmz nspr js otp couch
 do

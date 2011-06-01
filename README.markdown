@@ -16,5 +16,9 @@ Usage
     $ git clone git@github.com:daleharvey/build-android-couch.git
     $ cd build-android-couch
     $ ./build.android
-    $ ./build.curl
     $ ./build.resetmz
+    $ ./build.nspr
+    $ ./build.js
+    $ ./build.otp
+    $ ./build.couch
+    $ ./build.final
