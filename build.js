@@ -1,9 +1,11 @@
-#!/bin/bash -x 
+#!/bin/bash -x
 #
 
-ANDROID_NDK=$COUCH_ANRDOID_HOME/software/android/android-ndk-r4c
+source scripts/env
 
-cd mozilla-central/js/src
+ANDROID_NDK=$COUCH_ANDROID_HOME/build/deps/ndk/android-ndk-r4c
+
+cd $COUCH_ANDROID_HOME/build/deps/mozilla-current/mozilla-central/js/src
 autoconf2.13
 
 ./configure \
@@ -19,7 +21,7 @@ autoconf2.13
 --with-arm-kuser \
 --enable-threadsafe \
 --with-nspr-cflags=-I$(pwd)/../../nsprpub/dist/include/nspr \
---with-nspr-libs="-L$(pwd)/../../nsprpub/dist/lib -lnspr4 -lplc4 -lplds4" 
+--with-nspr-libs="-L$(pwd)/../../nsprpub/dist/lib -lnspr4 -lplc4 -lplds4"
 
 make -s
 
