@@ -57,7 +57,7 @@ cd $COUCH_ANDROID_HOME
 # Finally move things into place
 #
 
-cp -Rdp build/deps/sdcard build/$RELEASE/sdcard
+cp -Rdp /sdcard build/$RELEASE/sdcard
 mv build/deps/otp_rel.package build/$RELEASE/sdcard/Android/data/$ANDROID_APP_NAME/erlang
 
 # We need the shared lib because our toolchain does not support the static lib (libstdc++ stuff)
@@ -71,6 +71,7 @@ cp build/deps/mozilla-current/mozilla-central/js/src/libmozjs.so build/$RELEASE/
 #
 rm release
 ln -s  build/$RELEASE release
+patch -p0 < patches/release.patch
 # patch -p0 < $COUCH_ANDROID_HOME/patches/release.patch
 
 chmod +x build/$RELEASE/sdcard/Android/data/$ANDROID_APP_NAME/couchdb/bin/couchjs_wrapper
