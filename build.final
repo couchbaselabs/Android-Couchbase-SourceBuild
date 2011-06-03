@@ -20,7 +20,7 @@ cp -Rdp build/deps/otp_rel build/deps/otp_rel.package
 
 cd build/deps/otp_rel.package
 
-./Install -cross -sasl build/$RELEASE/data/data/$ANDROID_APP_NAME/erlang
+./Install -cross -sasl /data/data/$ANDROID_APP_NAME/erlang
 rm Install
 
 # Necessary?
