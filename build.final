@@ -56,7 +56,6 @@ mv build/deps/otp_rel.package $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/er
 cp build/deps/mozilla-current/mozilla-central/js/src/libmozjs.so $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/couchdb/lib/couchdb/bin
 
 ###
-# 1) DNS fixes from apage43's couchdb-android.s3.amazonaws.com/dns-fix.tgz
 # 2) Create couchjs_wrapper script (because we can't link to libmozjs.a and so need LD_LIBRARY_PATH set)
 # 3) Update #!/bin/sh in data/data/$APP_NAME/erlang/lib/couch-1.0.1/priv/couchspawnkillable
 # 4) Reflect new locations and the Android environment
@@ -65,7 +64,6 @@ rm release
 ln -s  $REL_PATH release
 patch -p0 < patches/release.patch
 rm release
-# patch -p0 < $COUCH_ANDROID_HOME/patches/release.patch
 
 chmod +x $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/couchdb/bin/couchjs_wrapper
 
