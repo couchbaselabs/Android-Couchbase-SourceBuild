@@ -8,9 +8,10 @@ if [ -z "$1" ]; then
 fi
 
 DATE=$(date +"%Y-%m-%d_%H-%M-%S")
-RELEASE="release-$DATE"
+REL_NAME="release-$DATE"
+REL_PATH="out/$REL_NAME"
 
-mkdir -p build/$RELEASE/data/data/$ANDROID_APP_NAME
+mkdir -p $REL_PATH/data/data/$ANDROID_APP_NAME
 
 ##
 # Configure and package Erlang/OTP
@@ -48,11 +49,11 @@ cd $COUCH_ANDROID_HOME
 # Finally move things into place
 #
 
-cp -Rdp /sdcard build/$RELEASE/sdcard
-mv build/deps/otp_rel.package build/$RELEASE/sdcard/Android/data/$ANDROID_APP_NAME/erlang
+cp -Rdp /sdcard $REL_PATH/sdcard
+mv build/deps/otp_rel.package $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/erlang
 
 # We need the shared lib because our toolchain does not support the static lib (libstdc++ stuff)
-cp build/deps/mozilla-current/mozilla-central/js/src/libmozjs.so build/$RELEASE/sdcard/Android/data/$ANDROID_APP_NAME/couchdb/lib/couchdb/bin
+cp build/deps/mozilla-current/mozilla-central/js/src/libmozjs.so $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/couchdb/lib/couchdb/bin
 
 ###
 # 1) DNS fixes from apage43's couchdb-android.s3.amazonaws.com/dns-fix.tgz
@@ -61,17 +62,18 @@ cp build/deps/mozilla-current/mozilla-central/js/src/libmozjs.so build/$RELEASE/
 # 4) Reflect new locations and the Android environment
 #
 rm release
-ln -s  build/$RELEASE release
+ln -s  $REL_PATH release
 patch -p0 < patches/release.patch
+rm release
 # patch -p0 < $COUCH_ANDROID_HOME/patches/release.patch
 
-chmod +x build/$RELEASE/sdcard/Android/data/$ANDROID_APP_NAME/couchdb/bin/couchjs_wrapper
+chmod +x $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/couchdb/bin/couchjs_wrapper
 
 # Build ICU for whatever version of Android was compiled in ~/software/android/sdk/sources
 
 agcc \
 -shared \
--o build/$RELEASE/sdcard/Android/data/$ANDROID_APP_NAME/couchdb/lib/couchdb/couch_icu_driver.so couchdb/src/couchdb/priv/.libs/libcouch_icu_driver.a \
+-o $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/couchdb/lib/couchdb/couch_icu_driver.so couchdb/src/couchdb/priv/.libs/libcouch_icu_driver.a \
 -licuuc \
 -licudata \
 -licui18n \
@@ -82,7 +84,7 @@ agcc \
 # Remove vestigal files from Couch directory
 # (Futon is in www)
 #
-cd build/$RELEASE/sdcard/Android/data/$ANDROID_APP_NAME/couchdb
+cd $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/couchdb
 #rm -rf share/couchdb/www share/doc share/man
 rm -rf share/doc share/man
 cd $COUCH_ANDROID_HOME
@@ -90,7 +92,7 @@ cd $COUCH_ANDROID_HOME
 ##
 # Archive the release
 #
-cd build/$RELEASE
-#touch filecount.$(find | wc -l)
+cd $REL_PATH
+touch filecount.$(find | wc -l)
 tar -czf ../release-$1.tgz data sdcard
 cd ..
