@@ -27,27 +27,18 @@ rm Install
 chmod -x erts-5.7.5/bin/start_erl.src erts-5.7.5/bin/start.src
 
 # Remove unnecessary files
+
+shopt -s extglob
+
 rm -rf erts-5.7.5/doc erts-5.7.5/include erts-5.7.5/man erts-5.7.5/src misc releases usr
 
-# Pare lib directory
-libs_to_keep="crypto-1.6.4 erts-5.7.5 inets-5.3 kernel-2.13.5 public_key-0.5 sasl-2.1.9 ssl-3.10.8 stdlib-1.16.5 xmerl-1.2.4"
-
 cd lib
-mkdir backuplib
 
-for i in $libs_to_keep
-do
-    mv $i backuplib/
-done
-
-mv backuplib ../
-rm -rf *
-
-mv ../backuplib/* .
-rm -rf ../backuplib
+rm -rf !(crypto-1.6.4|erts-5.7.5|inets-5.3|kernel-2.13.5|public_key-0.5|sasl-2.1.9|ssl-3.10.8|stdlib-1.16.5|xmerl-1.2.4)
 
 # Remove vestigal files
 find . -depth -name src -type d -exec rm -rf {} \;
+find . -depth -name doc -type d -exec rm -rf {} \;
 find . -depth -name examples -type d -exec rm -rf {} \;
 find . -depth -name include -type d -exec rm -rf {} \;
 
