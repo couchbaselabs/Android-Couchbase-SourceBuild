@@ -1,0 +1,139 @@
+diff --git a/erts/emulator/Makefile.in b/erts/emulator/Makefile.in
+index fb8d718..4ed25c9 100644
+--- a/erts/emulator/Makefile.in
++++ b/erts/emulator/Makefile.in
+@@ -352,6 +352,7 @@ EMULATOR_EXECUTABLE = beam$(TF_MARKER).dll
+ else
+ ifeq ($(CC), agcc)
+ EMULATOR_EXECUTABLE = libbeam$(TF_MARKER).so
++EMULATOR_EXECUTABLE_REG = beam$(TF_MARKER)
+ else
+ EMULATOR_EXECUTABLE = beam$(TF_MARKER)
+ endif
+@@ -374,7 +375,11 @@ ifeq ($(FLAVOR)-@ERTS_BUILD_SMP_EMU@,smp-no)
+ all:
+ 	@echo '*** Omitted build of emulator with smp support'
+ else
++ifeq ($(CC), agcc)
++all: generate erts_lib zlib pcre $(BINDIR)/$(EMULATOR_EXECUTABLE) $(BINDIR)/$(EMULATOR_EXECUTABLE_REG) $(UNIX_ONLY_BUILDS)
++else
+ all: generate erts_lib zlib pcre $(BINDIR)/$(EMULATOR_EXECUTABLE) $(UNIX_ONLY_BUILDS)
++endif
+ ifeq ($(OMIT_OMIT_FP),yes)
+ 	@echo '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
+ 	@echo '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
+@@ -453,6 +458,7 @@ release_spec: all
+ 	$(INSTALL_DATA) $(RELEASE_INCLUDES) $(RELEASE_PATH)/usr/include
+ 	$(INSTALL_DATA) $(RELEASE_INCLUDES) $(RELSYSDIR)/include
+ 	$(INSTALL_PROGRAM) $(BINDIR)/$(EMULATOR_EXECUTABLE) $(RELSYSDIR)/bin
++	$(INSTALL_PROGRAM) $(BINDIR)/$(EMULATOR_EXECUTABLE_REG) $(RELSYSDIR)/bin
+ ifeq ($(ERLANG_OSTYPE), unix)
+ 	$(INSTALL_PROGRAM) $(BINDIR)/$(CS_EXECUTABLE) $(RELSYSDIR)/bin
+ endif
+@@ -1013,6 +1019,13 @@ ifeq ($(CC), agcc)
+ $(BINDIR)/$(EMULATOR_EXECUTABLE): $(INIT_OBJS) $(OBJS) $(DEPLIBS)
+ 	$(PURIFY) $(LD) -o $(BINDIR)/$(EMULATOR_EXECUTABLE) \
+ 	$(HIPEBEAMLDFLAGS) $(LDFLAGS) $(DEXPORT) $(INIT_OBJS) $(OBJS) $(LIBS) -shared
++
++$(OBJDIR)/beam.o:
++	$(CC) $(CFLAGS) $(INCLUDES) -c beam/beam.c -o $(OBJDIR)/beam.o
++
++$(BINDIR)/$(EMULATOR_EXECUTABLE_REG): $(OBJDIR)/beam.o
++	$(PURIFY) $(LD) -o $(BINDIR)/$(EMULATOR_EXECUTABLE_REG) \
++	$(HIPEBEAMLDFLAGS) $(LDFLAGS) $(DEXPORT) $(OBJDIR)/beam.o $(LIBS) -L$(BINDIR) -lbeam
+ else
+ $(BINDIR)/$(EMULATOR_EXECUTABLE): $(INIT_OBJS) $(OBJS) $(DEPLIBS)
+ 	$(PURIFY) $(LD) -o $(BINDIR)/$(EMULATOR_EXECUTABLE) \
+diff --git a/erts/emulator/sys/unix/erl_child_setup.c b/erts/emulator/sys/unix/erl_child_setup.c
+index 7c6e4a2..c1a1549 100644
+--- a/erts/emulator/sys/unix/erl_child_setup.c
++++ b/erts/emulator/sys/unix/erl_child_setup.c
+@@ -116,7 +116,11 @@ main(int argc, char *argv[])
+ 	    execv(argv[CS_ARGV_NO_OF_ARGS],&(argv[CS_ARGV_NO_OF_ARGS + 1]));
+ 	}
+     } else {
++#ifdef ANDROID_ARM
++	execl("/system/bin/sh", "sh", "-c", argv[CS_ARGV_CMD_IX], (char *) NULL);
++#else
+ 	execl("/bin/sh", "sh", "-c", argv[CS_ARGV_CMD_IX], (char *) NULL);
++#endif
+     }
+     return 1;
+ }
+diff --git a/erts/emulator/sys/unix/sys.c b/erts/emulator/sys/unix/sys.c
+index 31ab5d0..9a260a2 100644
+--- a/erts/emulator/sys/unix/sys.c
++++ b/erts/emulator/sys/unix/sys.c
+@@ -1539,7 +1539,11 @@ static ErlDrvData spawn_start(ErlDrvPort port_num, char* name, SysDriverOpts* op
+ 		    }
+ 		}
+ 	    } else {
++#ifdef ANDROID_ARM
++		execle("/system/bin/sh", "sh", "-c", cmd_line, (char *) NULL, new_environ);
++#else
+ 		execle("/bin/sh", "sh", "-c", cmd_line, (char *) NULL, new_environ);
++#endif
+ 	    }
+ 	child_error:
+ 	    _exit(1);
+@@ -1660,7 +1664,12 @@ static ErlDrvData spawn_start(ErlDrvPort port_num, char* name, SysDriverOpts* op
+ 	fcntl(i, F_SETFD, 1);
+ 
+     qnx_spawn_options.flags = _SPAWN_SETSID;
++#ifdef ANDROID_ARM
++    /* Are we really in QNX?  Then we don't need this special case here... */
++    if ((pid = spawnl(P_NOWAIT, "/system/bin/sh", "/system/bin/sh", "-c", cmd_line, 
++#else
+     if ((pid = spawnl(P_NOWAIT, "/bin/sh", "/bin/sh", "-c", cmd_line, 
++#endif
+                       (char *) 0)) < 0) {
+ 	erts_free(ERTS_ALC_T_TMP, (void *) cmd_line);
+         reset_qnx_spawn();
+diff --git a/erts/emulator/beam/beam.c b/erts/emulator/beam/beam.c
+new file mode 100644
+index 0000000..167b96e
+--- /dev/null
++++ b/erts/emulator/beam/beam.c
+@@ -0,0 +1,2 @@
++void erl_start(int argc, char** argv);
++int main(int argc, char** argv) { erl_start(argc, argv); }
+diff --git a/lib/crypto/c_src/Makefile.in b/lib/crypto/c_src/Makefile.in
+index 0b39808..5d9658e 100644
+--- a/lib/crypto/c_src/Makefile.in
++++ b/lib/crypto/c_src/Makefile.in
+@@ -108,7 +108,7 @@ $(OBJDIR)/%.o: %.c
+ 
+ $(LIBDIR)/crypto_drv.so: $(OBJS)
+ 	$(INSTALL_DIR) $(LIBDIR) 
+-	$(LD) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(CRYPTO_LINK_LIB) $(LIBS) -lbeam
++	$(LD) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(CRYPTO_LINK_LIB) $(LIBS) -lbeam -shared
+ 
+ $(LIBDIR)/crypto_drv.dll: $(OBJS)
+ 	$(INSTALL_DIR) $(LIBDIR)
+diff --git a/otp_build b/otp_build
+index ad9d38e..b875b38 100755
+--- a/otp_build
++++ b/otp_build
+@@ -284,7 +284,7 @@ do_autoconf ()
+ 	    export WANT_AUTOCONF_VER
+ 	fi
+ 	exp_ac_vsn=$EXPECTED_AUTOCONF_VERSION
+-	ac_vsn_blob=`autoconf --version`
++	ac_vsn_blob=`autoconf2.59 --version`
+ 	ac_vsn=`echo x$ac_vsn_blob | sed "s|[^0-9]*\([0-9][^ \t\n]*\).*|\1|"`
+ 	case "$ac_vsn" in
+ 	    $exp_ac_vsn)
+@@ -327,11 +327,11 @@ do_autoconf ()
+ 		rm -f "$d"/autom4te.cache/*
+ 	    }
+ 	    echo "=== running autoconf in $d"
+-	    ( cd "$d" && autoconf ) || exit 1
++	    ( cd "$d" && autoconf2.59 ) || exit 1
+ 	    chdr=`cat "$file" | sed -n "s|.*\(AC_CONFIG_HEADER\).*|\1|p"`
+ 	    [ "$chdr" = "AC_CONFIG_HEADER" ] || continue
+ 	    echo "=== running autoheader in $d"
+-	    ( cd "$d" && autoheader ) || exit 1
++	    ( cd "$d" && autoheader2.59 ) || exit 1
+ 	done
+ 
+ 	restore_vars OVERRIDE_TARGET TARGET

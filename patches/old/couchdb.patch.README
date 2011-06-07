@@ -1,0 +1,6 @@
+Intended to be applied against git://github.com/apache/couchdb.git (branch 1.0.2)
+
+This patch is a combination of Aaron Miller's patch against Couch
+1.0.1 from the original Couch on Android port, Chris C. Coulson's
+patch for Couch 1.0.1 allowing compatibility with newer versions of
+libjs and fixes by Matt Adams for Android.

@@ -1,0 +1,645 @@
+diff --git a/configure.ac b/configure.ac
+index c609a08..a31bc7b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -118,6 +118,21 @@ Is the Mozilla SpiderMonkey library installed?])])])])])
+ 
+ AC_SUBST(JS_LIB_BASE)
+ 
++AC_CHECK_LIB([$JS_LIB_BASE], [JS_FreezeObject],
++    AC_DEFINE([HAVE_JS_FREEZE_OBJECT], [1], [Define whether we have JS_FreezeObject]))
++
++AC_CHECK_LIB([$JS_LIB_BASE], [JS_NewGlobalObject],
++    AC_DEFINE([HAVE_JS_NEW_GLOBAL_OBJECT], [1], [Define whether we have JS_NewGlobalObject]))
++
++AC_CHECK_LIB([$JS_LIB_BASE], [js_fgets],
++    AC_DEFINE([HAVE_JS_FGETS], [1], [Define whether js_fgets is available to use]))
++
++AC_CHECK_LIB([$JS_LIB_BASE], [JS_GetStringCharsAndLength],
++    AC_DEFINE([HAVE_JS_GET_STRING_CHARS_AND_LENGTH], [1], [Define whether we have JS_GetStringCharsAndLength]))
++
++AC_CHECK_LIB([$JS_LIB_BASE], [JS_NewCompartmentAndGlobalObject],
++    AC_DEFINE([HAVE_COMPARTMENTS], [1], [Define whether we have JS_NewCompartmentAndGlobalObject]))
++
+ if test x${IS_WINDOWS} = xTRUE; then
+     if test -f "$JS_LIB_DIR/$JS_LIB_BASE.dll"; then
+         # seamonkey 1.7- build layout on Windows
+@@ -189,6 +204,13 @@ AC_COMPILE_IFELSE(
+ CFLAGS="$OLD_CFLAGS"
+ AC_LANG_POP(C)
+ 
++AC_ARG_WITH([android], [AC_HELP_STRING([--with-android=PATH]
++    [set Android system build path])],[
++    ICU_CONFIG="" 
++    ICU_LOCAL_CFLAGS="-I$withval/external/icu4c/common -I$withval/external/icu4c/i18n"
++    ICU_LOCAL_LDFLAGS="-L$withval/out/target/product/generic/system/lib"
++    ICU_LOCAL_BIN=
++], [
+ AC_ARG_WITH([win32-icu-binaries], [AC_HELP_STRING([--with-win32-icu-binaries=PATH],
+     [set PATH to the Win32 native ICU binaries directory])], [
+     ICU_CONFIG="" # supposed to be a command to query options...
+@@ -200,13 +222,19 @@ AC_ARG_WITH([win32-icu-binaries], [AC_HELP_STRING([--with-win32-icu-binaries=PAT
+     ICU_LOCAL_CFLAGS=`$ICU_CONFIG --cppflags-searchpath`
+     ICU_LOCAL_LDFLAGS=`$ICU_CONFIG --ldflags-searchpath`
+     ICU_LOCAL_BIN=
+-])
++])])
+ 
+ AC_SUBST(ICU_CONFIG)
+ AC_SUBST(ICU_LOCAL_CFLAGS)
+ AC_SUBST(ICU_LOCAL_LDFLAGS)
+ AC_SUBST(ICU_LOCAL_BIN)
+ 
++AC_ARG_WITH([android-curl], [AC_HELP_STRING([--with-android-curl=PATH]
++    [set PATH to directory where curl is built for android])], [
++    CURL_CFLAGS="-I$withval/include -DCURL_STATICLIB"
++    CURL_LIBDIR="$withval/lib"
++    CURL_LDFLAGS="-L$CURL_LIBDIR -lcurl"
++], [
+ AC_ARG_WITH([win32-curl], [AC_HELP_STRING([--with-win32-curl=PATH],
+     [set PATH to the Win32 native curl directory])], [
+     # default build on windows is a static lib, and that's what we want too
+@@ -216,12 +244,15 @@ AC_ARG_WITH([win32-curl], [AC_HELP_STRING([--with-win32-curl=PATH],
+ ], [
+     AC_CHECK_CURL([7.18.0])
+     CURL_LDFLAGS=-lcurl
+-])
++])])
+ 
+ AC_SUBST(CURL_CFLAGS)
+ AC_SUBST(CURL_LIBS)
+ AC_SUBST(CURL_LDFLAGS)
+ 
++#Probably should fix this up better in the future for cross-compiles in general
++#instead of just keeping this exception for android
++if test "x$CC" != "xagcc"; then
+ case "$(uname -s)" in
+   Linux)
+     LIBS="$LIBS -lcrypt"
+@@ -234,6 +265,7 @@ case "$(uname -s)" in
+     LIBS="$LIBS -lcrypto"
+   ;;
+ esac
++fi
+ 
+ AC_PATH_PROG([ERL], [erl])
+ 
+diff --git a/src/couchdb/priv/couch_js/http.c b/src/couchdb/priv/couch_js/http.c
+index 6c2a8a8..5a2112d 100644
+--- a/src/couchdb/priv/couch_js/http.c
++++ b/src/couchdb/priv/couch_js/http.c
+@@ -43,6 +43,10 @@ char* METHODS[] = {"GET", "HEAD", "POST", "PUT", "DELETE", "COPY", NULL};
+ #define DELETE  4
+ #define COPY    5
+ 
++#ifdef JSFUN_CONSTRUCTOR
++#define JSFUN_FAST_NATIVE 0
++#endif
++
+ static JSBool
+ go(JSContext* cx, JSObject* obj, HTTPData* http, char* body, size_t blen);
+ 
+@@ -50,10 +54,21 @@ static JSString*
+ str_from_binary(JSContext* cx, char* data, size_t length);
+ 
+ static JSBool
++#ifdef JSFUN_CONSTRUCTOR
++constructor(JSContext* cx, uintN argc, jsval* vp)
++#else
+ constructor(JSContext* cx, JSObject* obj, uintN argc, jsval* argv, jsval* rval)
++#endif
+ {
+     HTTPData* http = NULL;
+     JSBool ret = JS_FALSE;
++#ifdef JSFUN_CONSTRUCTOR
++    JSObject* obj = JS_NewObjectForConstructor(cx, vp);
++    if(!obj) {
++        JS_ReportError(cx, "Failed to create 'this' object");
++        goto error;
++    }
++#endif
+ 
+     http = (HTTPData*) malloc(sizeof(HTTPData));
+     if(!http)
+@@ -80,6 +95,9 @@ error:
+     if(http) free(http);
+ 
+ success:
++#ifdef JSFUN_CONSTRUCTOR
++    JS_SET_RVAL(cx, vp, OBJECT_TO_JSVAL(obj));
++#endif
+     return ret;
+ }
+ 
+@@ -89,7 +107,8 @@ destructor(JSContext* cx, JSObject* obj)
+     HTTPData* http = (HTTPData*) JS_GetPrivate(cx, obj);
+     if(!http)
+     {
+-        fprintf(stderr, "Unable to destroy invalid CouchHTTP instance.\n");
++        // Comment out -- this messes up CouchDB and doesn't seem to be a big deal anyway
++        //fprintf(stderr, "Unable to destroy invalid CouchHTTP instance.\n");
+     }
+     else
+     {
+@@ -100,13 +119,20 @@ destructor(JSContext* cx, JSObject* obj)
+ }
+ 
+ static JSBool
+-open(JSContext* cx, JSObject* obj, uintN argc, jsval* argv, jsval* rval)
+-{    
++open(JSContext* cx, uintN argc, jsval* vp)
++{
++    JSBool ret = JS_FALSE;
++    JSObject* obj = JS_THIS_OBJECT(cx, vp);
++    if(!obj) {
++        JS_ReportError(cx, "No 'this' object");
++        goto done;
++    }
++
+     HTTPData* http = (HTTPData*) JS_GetPrivate(cx, obj);
+     char* method = NULL;
+     char* url = NULL;
+-    JSBool ret = JS_FALSE;
+     int methid;
++    jsval* argv = JS_ARGV(cx, vp);
+ 
+     if(!http)
+     {
+@@ -174,6 +200,7 @@ open(JSContext* cx, JSObject* obj, uintN argc, jsval* argv, jsval* rval)
+     // Disable Expect: 100-continue
+     http->req_headers = curl_slist_append(http->req_headers, "Expect:");
+ 
++    JS_SET_RVAL(cx, vp, JSVAL_VOID);
+     ret = JS_TRUE;
+ 
+ done:
+@@ -182,14 +209,21 @@ done:
+ }
+ 
+ static JSBool
+-setheader(JSContext* cx, JSObject* obj, uintN argc, jsval* argv, jsval* rval)
+-{    
++setheader(JSContext* cx, uintN argc, jsval* vp)
++{
++    JSBool ret = JS_FALSE;
++    JSObject* obj = JS_THIS_OBJECT(cx, vp);
++    if(!obj) {
++        JS_ReportError(cx, "No 'this' object");
++        goto done;
++    }
++
+     HTTPData* http = (HTTPData*) JS_GetPrivate(cx, obj);
+     char* keystr = NULL;
+     char* valstr = NULL;
+     char* hdrbuf = NULL;
+     size_t hdrlen = -1;
+-    JSBool ret = JS_FALSE;
++    jsval* argv = JS_ARGV(cx, vp);
+ 
+     if(!http)
+     {
+@@ -234,6 +268,7 @@ setheader(JSContext* cx, JSObject* obj, uintN argc, jsval* argv, jsval* rval)
+     snprintf(hdrbuf, hdrlen, "%s: %s", keystr, valstr);
+     http->req_headers = curl_slist_append(http->req_headers, hdrbuf);
+ 
++    JS_SET_RVAL(cx, vp, JSVAL_VOID);
+     ret = JS_TRUE;
+ 
+ done:
+@@ -245,12 +280,19 @@ done:
+ }
+ 
+ static JSBool
+-sendreq(JSContext* cx, JSObject* obj, uintN argc, jsval* argv, jsval* rval)
++sendreq(JSContext* cx, uintN argc, jsval* vp)
+ {
++    JSBool ret = JS_FALSE;
++    JSObject* obj = JS_THIS_OBJECT(cx, vp);
++    if(!obj) {
++        JS_ReportError(cx, "No 'this' object");
++        goto done;
++    }
++
+     HTTPData* http = (HTTPData*) JS_GetPrivate(cx, obj);
+     char* body = NULL;
+     size_t bodylen = 0;
+-    JSBool ret = JS_FALSE;
++    jsval* argv = JS_ARGV(cx, vp);
+     
+     if(!http)
+     {
+@@ -270,6 +312,9 @@ sendreq(JSContext* cx, JSObject* obj, uintN argc, jsval* argv, jsval* rval)
+ 
+     ret = go(cx, obj, http, body, bodylen);
+ 
++    if (ret == JS_TRUE)
++        JS_SET_RVAL(cx, vp, JSVAL_VOID);
++
+ done:
+     if(body) free(body);
+     return ret;
+@@ -285,7 +330,12 @@ status(JSContext* cx, JSObject* obj, jsval idval, jsval* vp)
+         JS_ReportError(cx, "Invalid CouchHTTP instance.");
+         return JS_FALSE;
+     }
+-    
++#ifndef INT_FITS_IN_JSVAL
++    // jsval's are 64-bits wide in mozjs >= 2.0, so a jsint
++    // can use the full 32-bits now no bits are reserved for tagging
++    *vp = INT_TO_JSVAL(http->last_status);
++    return JS_TRUE;
++#else    
+     if(INT_FITS_IN_JSVAL(http->last_status))
+     {
+         *vp = INT_TO_JSVAL(http->last_status);
+@@ -296,6 +346,7 @@ status(JSContext* cx, JSObject* obj, jsval idval, jsval* vp)
+         JS_ReportError(cx, "INTERNAL: Invalid last_status");
+         return JS_FALSE;
+     }
++#endif
+ }
+ 
+ JSClass CouchHTTPClass = {
+@@ -320,9 +371,9 @@ JSPropertySpec CouchHTTPProperties[] = {
+ };
+ 
+ JSFunctionSpec CouchHTTPFunctions[] = {
+-    {"_open", open, 3, 0, 0},
+-    {"_setRequestHeader", setheader, 2, 0, 0},
+-    {"_send", sendreq, 1, 0, 0},
++    {"_open", open, 3, JSFUN_FAST_NATIVE, 0},
++    {"_setRequestHeader", setheader, 2, JSFUN_FAST_NATIVE, 0},
++    {"_send", sendreq, 1, JSFUN_FAST_NATIVE, 0},
+     {0, 0, 0, 0, 0}
+ };
+ 
+diff --git a/src/couchdb/priv/couch_js/main.c b/src/couchdb/priv/couch_js/main.c
+index 376aa15..f4bef7c 100644
+--- a/src/couchdb/priv/couch_js/main.c
++++ b/src/couchdb/priv/couch_js/main.c
+@@ -28,14 +28,38 @@ int gExitCode = 0;
+ #define FINISH_REQUEST(cx) \
+     JS_EndRequest(cx); \
+     JS_ClearContextThread(cx);
++#define FINISH_REQUEST_AND_DESTROY(cx) \
++    JS_EndRequest(cx); \
++    JS_DestroyContext(cx);
+ #else
+ #define SETUP_REQUEST(cx)
+ #define FINISH_REQUEST(cx)
++#define FINISH_REQUEST_AND_DESTROY(cx) \
++    JS_DestroyContext(cx);
++#endif
++
++#ifdef JSFUN_CONSTRUCTOR
++#define JSFUN_FAST_NATIVE 0
+ #endif
+ 
++static JSClass global_class = {
++    "GlobalClass",
++    JSCLASS_GLOBAL_FLAGS,
++    JS_PropertyStub,
++    JS_PropertyStub,
++    JS_PropertyStub,
++    JS_PropertyStub,
++    JS_EnumerateStub,
++    JS_ResolveStub,
++    JS_ConvertStub,
++    JS_FinalizeStub,
++    JSCLASS_NO_OPTIONAL_MEMBERS
++};
++
+ static JSBool
+-evalcx(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
++evalcx(JSContext* cx, uintN argc, jsval* vp)
+ {
++    jsval* argv = JS_ARGV(cx, vp);
+     JSString *str;
+     JSObject *sandbox;
+     JSContext *subcx;
+@@ -43,6 +67,9 @@ evalcx(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+     size_t srclen;
+     JSBool ret = JS_FALSE;
+     jsval v;
++#ifdef HAVE_COMPARTMENTS
++    JSCrossCompartmentCall *call = NULL;
++#endif
+ 
+     sandbox = NULL;
+     if(!JS_ConvertArguments(cx, argc, argv, "S / o", &str, &sandbox))
+@@ -59,42 +86,70 @@ evalcx(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+ 
+     SETUP_REQUEST(subcx);
+ 
++#ifdef HAVE_JS_GET_STRING_CHARS_AND_LENGTH
++    src = JS_GetStringCharsAndLength(cx, str, &srclen);
++#else
+     src = JS_GetStringChars(str);
+     srclen = JS_GetStringLength(str);
++#endif
+ 
++#ifdef HAVE_COMPARTMENTS
++    /* Re-use the compartment associated with the main context,
++     * rather than creating a new compartment */
++    JSObject *global = JS_GetGlobalObject(cx);
++    if(!global)
++    {
++       goto done;
++    }
++    call = JS_EnterCrossCompartmentCall(subcx, global);
++#endif
+     if(!sandbox)
+     {
++#ifdef HAVE_JS_NEW_GLOBAL_OBJECT
++        sandbox = JS_NewGlobalObject(subcx, &global_class);
++#else
+         sandbox = JS_NewObject(subcx, NULL, NULL, NULL);
++#endif
+         if(!sandbox || !JS_InitStandardClasses(subcx, sandbox)) goto done;
+     }
+ 
+     if(srclen == 0)
+     {
+-        *rval = OBJECT_TO_JSVAL(sandbox);
++        JS_SET_RVAL(cx, vp, OBJECT_TO_JSVAL(sandbox));
+     }
+     else
+     {
+-        JS_EvaluateUCScript(subcx, sandbox, src, srclen, NULL, 0, rval);
++        JS_EvaluateUCScript(subcx, sandbox, src, srclen, NULL, 0, &JS_RVAL(cx, vp));
+     }
+-    
++
+     ret = JS_TRUE;
+ 
+ done:
+-    FINISH_REQUEST(subcx);
+-    JS_DestroyContext(subcx);
++#ifdef HAVE_COMPARTMENTS
++    if(call)
++    {
++        JS_LeaveCrossCompartmentCall(call);
++    }
++#endif
++    /* Don't use FINISH_REQUEST before destroying a context
++     * Destroying a context without a thread asserts on threadsafe
++     * debug builds */
++    FINISH_REQUEST_AND_DESTROY(subcx);
+     return ret;
+ }
+ 
+ static JSBool
+-gc(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
++gc(JSContext* cx, uintN argc, jsval* vp)
+ {
+     JS_GC(cx);
++    JS_SET_RVAL(cx, vp, JSVAL_VOID);
+     return JS_TRUE;
+ }
+ 
+ static JSBool
+-print(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
++print(JSContext* cx, uintN argc, jsval* vp)
+ {
++    jsval* argv = JS_ARGV(cx, vp);
+     uintN i;
+     char *bytes;
+ 
+@@ -109,16 +164,52 @@ print(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+ 
+     fputc('\n', stdout);
+     fflush(stdout);
++    JS_SET_RVAL(cx, vp, JSVAL_VOID);
+     return JS_TRUE;
+ }
+ 
+ static JSBool
+-quit(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
++quit(JSContext* cx, uintN argc, jsval* vp)
+ {
++    jsval* argv = JS_ARGV(cx, vp);
+     JS_ConvertArguments(cx, argc, argv, "/ i", &gExitCode);
+     return JS_FALSE;
+ }
+ 
++#ifndef HAVE_JS_FGETS
++/* js_fgets is not linkable from C consumers with libmozjs >= 2.0,
++ * so we reimplement it here */
++#undef js_fgets
++static int
++couchjs_fgets(char *buf, int size, FILE *file)
++{
++    int n, i, c;
++    JSBool crflag;
++
++    n = size - 1;
++    if (n < 0)
++        return -1;
++
++    crflag = JS_FALSE;
++    for (i = 0; i < n && (c = getc(file)) != EOF; i++) {
++        buf[i] = c;
++        if (c == '\n') {        /* any \n ends a line */
++            i++;                /* keep the \n; we know there is room for \0 */
++            break;
++        }
++        if (crflag) {           /* \r not followed by \n ends line at the \r */
++            ungetc(c, file);
++            break;              /* and overwrite c in buf with \0 */
++        }
++        crflag = (c == '\r');
++    }
++
++    buf[i] = '\0';
++    return i;
++}
++#define js_fgets couchjs_fgets
++#endif
++
+ static char*
+ readfp(JSContext* cx, FILE* fp, size_t* buflen)
+ {
+@@ -130,7 +221,6 @@ readfp(JSContext* cx, FILE* fp, size_t* buflen)
+ 
+     bytes = JS_malloc(cx, byteslen);
+     if(bytes == NULL) return NULL;
+-    
+     while((readlen = js_fgets(bytes+used, byteslen-used, stdin)) > 0)
+     {
+         used += readlen;
+@@ -157,7 +247,7 @@ readfp(JSContext* cx, FILE* fp, size_t* buflen)
+ }
+ 
+ static JSBool
+-readline(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
++readline(JSContext* cx, uintN argc, jsval* vp) {
+     jschar *chars;
+     JSString *str;
+     char* bytes;
+@@ -173,9 +263,10 @@ readline(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
+     /* Treat the empty string specially */
+     if(byteslen == 0)
+     {
+-        *rval = JS_GetEmptyStringValue(cx);
++        //JS_SET_RVAL(cx, vp, JS_GetEmptyStringValue(cx));
+         JS_free(cx, bytes);
+-        return JS_TRUE;
++        //return JS_TRUE;
++        return JS_FALSE;
+     }
+ 
+     /* Shrink the buffer to the real size */
+@@ -191,22 +282,32 @@ readline(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
+     JS_free(cx, bytes);
+ 
+     if(!str) return JS_FALSE;
+-
+-    *rval = STRING_TO_JSVAL(str);
++    JS_SET_RVAL(cx, vp, STRING_TO_JSVAL(str));
+ 
+     return JS_TRUE;
+ }
+ 
+ static JSBool
+-seal(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
++seal(JSContext* cx, uintN argc, jsval* vp) {
++    jsval* argv = JS_ARGV(cx, vp);
+     JSObject *target;
+     JSBool deep = JS_FALSE;
+ 
+     if (!JS_ConvertArguments(cx, argc, argv, "o/b", &target, &deep))
+         return JS_FALSE;
+-    if (!target)
++    if (!target) {
++        JS_SET_RVAL(cx, vp, JSVAL_VOID);
+         return JS_TRUE;
+-    return JS_SealObject(cx, target, deep);
++    }
++#ifdef HAVE_JS_FREEZE_OBJECT
++    JSBool res = deep ? JS_DeepFreezeObject(cx, target) : JS_FreezeObject(cx, target);
++#else
++    JSBool res = JS_SealObject(cx, target, deep);
++#endif
++    if (res == JS_TRUE)
++        JS_SET_RVAL(cx, vp, JSVAL_VOID);
++
++    return res;
+ }
+ 
+ static void
+@@ -248,29 +349,15 @@ printerror(JSContext *cx, const char *mesg, JSErrorReport *report)
+ }
+ 
+ static JSFunctionSpec global_functions[] = {
+-    {"evalcx", evalcx, 0, 0, 0},
+-    {"gc", gc, 0, 0, 0},
+-    {"print", print, 0, 0, 0},
+-    {"quit", quit, 0, 0, 0},
+-    {"readline", readline, 0, 0, 0},
+-    {"seal", seal, 0, 0, 0},
++    {"evalcx", evalcx, 0, JSFUN_FAST_NATIVE, 0},
++    {"gc", gc, 0, JSFUN_FAST_NATIVE, 0},
++    {"print", print, 0, JSFUN_FAST_NATIVE, 0},
++    {"quit", quit, 0, JSFUN_FAST_NATIVE, 0},
++    {"readline", readline, 0, JSFUN_FAST_NATIVE, 0},
++    {"seal", seal, 0, JSFUN_FAST_NATIVE, 0},
+     {0, 0, 0, 0, 0}
+ };
+ 
+-static JSClass global_class = {
+-    "GlobalClass",
+-    JSCLASS_GLOBAL_FLAGS,
+-    JS_PropertyStub,
+-    JS_PropertyStub,
+-    JS_PropertyStub,
+-    JS_PropertyStub,
+-    JS_EnumerateStub,
+-    JS_ResolveStub,
+-    JS_ConvertStub,
+-    JS_FinalizeStub,
+-    JSCLASS_NO_OPTIONAL_MEMBERS
+-};
+-
+ int
+ main(int argc, const char * argv[])
+ {
+@@ -290,9 +377,18 @@ main(int argc, const char * argv[])
+     JS_ToggleOptions(cx, JSOPTION_XML);
+     
+     SETUP_REQUEST(cx);
+-
++#ifdef HAVE_COMPARTMENTS
++    global = JS_NewCompartmentAndGlobalObject(cx, &global_class, NULL);
++    if (!global) return 1;
++    JSCrossCompartmentCall *call = JS_EnterCrossCompartmentCall(cx, global);
++#elif HAVE_JS_NEW_GLOBAL_OBJECT
++    global = JS_NewGlobalObject(cx, &global_class);
++    if (!global) return 1;
++#else
+     global = JS_NewObject(cx, &global_class, NULL, NULL);
+     if (!global) return 1;
++    JS_SetGlobalObject(cx, global);
++#endif
+     if (!JS_InitStandardClasses(cx, global)) return 1;
+     
+     for(sp = global_functions; sp->name != NULL; sp++)
+@@ -309,8 +405,6 @@ main(int argc, const char * argv[])
+     {
+         return 1;
+     }
+-    
+-    JS_SetGlobalObject(cx, global);
+ 
+     if(argc > 2)
+     {
+@@ -328,9 +422,15 @@ main(int argc, const char * argv[])
+         execute_script(cx, global, argv[1]);
+     }
+ 
+-    FINISH_REQUEST(cx);
++#ifdef HAVE_COMPARTMENTS
++    JS_LeaveCrossCompartmentCall(call);
++#endif
++
++    /* Don't use FINISH_REQUEST before destroying a context
++     * Destroying a context without a thread asserts on threadsafe
++     * debug builds */
++    FINISH_REQUEST_AND_DESTROY(cx);
+ 
+-    JS_DestroyContext(cx);
+     JS_DestroyRuntime(rt);
+     JS_ShutDown();
+ 
+diff --git a/src/couchdb/priv/couch_js/utf8.c b/src/couchdb/priv/couch_js/utf8.c
+index 699a6fe..b088020 100644
+--- a/src/couchdb/priv/couch_js/utf8.c
++++ b/src/couchdb/priv/couch_js/utf8.c
+@@ -12,6 +12,8 @@
+ 
+ #include <jsapi.h>
+ 
++#include "config.h"
++
+ static int
+ enc_char(uint8 *utf8Buffer, uint32 ucs4Char)
+ {
+@@ -129,8 +131,12 @@ enc_string(JSContext* cx, jsval arg, size_t* buflen)
+     str = JS_ValueToString(cx, arg);
+     if(!str) goto error;
+ 
++#ifdef HAVE_JS_GET_STRING_CHARS_AND_LENGTH
++    src = JS_GetStringCharsAndLength(cx, str, &srclen);
++#else
+     src = JS_GetStringChars(str);
+     srclen = JS_GetStringLength(str);
++#endif
+ 
+     if(!enc_charbuf(src, srclen, NULL, &byteslen)) goto error;
+     
+@@ -283,4 +289,4 @@ error:
+ 
+ success:
+     return str;
+-}
+\ No newline at end of file
++}

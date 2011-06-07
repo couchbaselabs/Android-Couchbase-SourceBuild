@@ -29,22 +29,22 @@ diff -ru release.bak/sdcard/Android/data/com.test.couch/couchdb/etc/couchdb/loca
  ; overwritten on server upgrade.
 
  [couchdb]
-+database_dir = /sdcard/Android/data/com.test.couch/couchdb/var/lib/couchdb
-+view_index_dir = /sdcard/Android/data/com.test.couch/couchdb/var/lib/couchdb
++database_dir = /sdcard/Android/data/com.test.couch/db
++view_index_dir = /sdcard/Android/data/com.test.couch/db
 +util_driver_dir = /data/data/com.test.couch/couchdb/lib/couchdb
  ;max_document_size = 4294967296 ; bytes
-+uri_file = /sdcard/Android/data/com.test.couch/couchdb/var/lib/couchdb/couch.uri
++uri_file = /sdcard/Android/data/com.test.couch/db/couch.uri
 
  [httpd]
 -;port = 5984
 -;bind_address = 127.0.0.1
-+port = 5985
++port = 5984
 +bind_address = 127.0.0.1
  ; Uncomment next line to trigger basic-auth popup on unauthorized requests.
  ;WWW-Authenticate = Basic realm="administrator"
 
 +[log]
-+file = /sdcard/Android/data/com.test.couch/couchdb/var/log/couchdb/couch.log
++file = /sdcard/Android/data/com.test.couch/db/couch.log
 +level = debug
 +
  [couch_httpd_auth]
@@ -70,7 +70,7 @@ diff -ruN release.bak/sdcard/Android/data/com.test.couch/couchdb/bin/couchjs rel
 
  # Licensed under the Apache License, Version 2.0 (the "License"); you may not
  # use this file except in compliance with the License. You may obtain a copy of
-@@ -63,7 +63,7 @@
+@@ -64,7 +64,7 @@
  }
 
  run_couchjs () {

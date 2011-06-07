@@ -5,7 +5,7 @@ These instruction are for building the couchdb android binaries from source, thi
 
 Android requires around 10GB of free space to complete its build.
 
-It is currently aimed to work on Ubuntu 10.4, other platforms should be possible.
+It is currently aimed to work on Ubuntu 10.4 and Debian Squeeze x86 32bit, other platforms should be possible.
 
 Dependencies
 ============
@@ -22,3 +22,11 @@ Usage
     $ ./build.otp
     $ ./build.couch
     $ ./build.final
+
+Credits
+=======
+Original port by Aaron Miller (https://github.com/apage43).
+
+Updated port, patches and build scripts by Matt Adams (http://radicaldynamic.com) based on Aaron's work and using patches to CouchDB from Chris C. Coulson (https://launchpad.net/~chrisccoulson) for compatibility with newer versions of libjs.
+
+Further work on the build system by Dale Harvey (http://arandomurl.com) and Matt Adams.

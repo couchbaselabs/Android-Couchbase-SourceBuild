@@ -2,6 +2,10 @@
 
 source scripts/env
 
+##
+# Build release numbers should follow the convention expected by couch-android-launcher.
+# E.g., 8-1.1 which translates to "build for froyo, version 1.1"
+# 
 if [ -z "$1" ]; then
     echo "Give me a release number bub!"
     exit 1
@@ -28,7 +32,6 @@ rm Install
 chmod -x erts-5.7.5/bin/start_erl.src erts-5.7.5/bin/start.src
 
 # Remove unnecessary files
-
 shopt -s extglob
 
 rm -rf erts-5.7.5/doc erts-5.7.5/include erts-5.7.5/man erts-5.7.5/src misc releases usr
@@ -60,18 +63,20 @@ cp build/deps/mozilla-current/mozilla-central/js/src/libmozjs.so $REL_PATH/sdcar
 # 3) Update #!/bin/sh in data/data/$APP_NAME/erlang/lib/couch-1.0.1/priv/couchspawnkillable
 # 4) Reflect new locations and the Android environment
 #
-rm release
-ln -s  $REL_PATH release
-patch -p0 < patches/release.patch
+[[ -f release ]] && rm release
+ln -s $REL_PATH release
+patch -lp0 < patches/release.patch
 rm release
 
 chmod +x $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/couchdb/bin/couchjs_wrapper
 
-# Build ICU for whatever version of Android was compiled in ~/software/android/sdk/sources
+# Store database and variable state in a directory that is safe from upgrades
+mkdir $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/db
 
+# Build ICU for whatever version of Android was compiled in ~/software/android/sdk/sources
 agcc \
 -shared \
--o $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/couchdb/lib/couchdb/couch_icu_driver.so couchdb/src/couchdb/priv/.libs/libcouch_icu_driver.a \
+-o $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/couchdb/lib/couchdb/couch_icu_driver.so $COUCH_ANDROID_HOME/build/deps/couchdb/src/couchdb/priv/.libs/libcouch_icu_driver.a \
 -licuuc \
 -licudata \
 -licui18n \
@@ -92,5 +97,5 @@ cd $COUCH_ANDROID_HOME
 #
 cd $REL_PATH
 touch filecount.$(find | wc -l)
-tar -czf ../release-$1.tgz data sdcard
+tar -czf ../release-$1.tgz filecount.* data sdcard
 cd ..
