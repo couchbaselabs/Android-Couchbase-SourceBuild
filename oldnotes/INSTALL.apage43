@@ -1,0 +1,91 @@
+Taken from https://github.com/apage43/couch-android-launcher/wiki/CouchDB-Build-Notes-Dump.
+These were used by Matt Adams to update the Couch on Android port but
+are probably of little significance at this point.
+
+----
+
+warn: These are notes I was personally taking. Will clean them up
+later, but may be of use if you are trying to build couchdb on android
+yourself.
+
+Curl
+=======================================================================
+
+./configure \
+CC=arm-eabi-gcc \
+--host=arm-linux 
+--disable-tftp \
+--disable-sspi \
+--disable-ipv6 \
+--disable-ldaps \
+--disable-ldap \
+--disable-telnet \
+--disable-pop3 \
+--disable-ftp \
+--with-ssl=$ANDROID_ROOT/external/openssl/ \
+--disable-imap \
+--disable-smtp \
+--disable-pop3 \
+--disable-rtsp \
+--disable-ares \
+--without-ca-bundle \
+--disable-warnings \
+--disable-manual \
+--without-nss \
+--enable-shared \
+--with-zlib=$ANDROID_ROOT/external/zlib \
+--without-random
+
+
+SpiderMonkey
+=======================================================================
+
+There is cross-compile support for spidermonkey 1.8. Should work well
+enough.
+
+Hey, wait, Android Fennec has spidermonkey, let’s try building it
+according to the JS only build instructions at
+https://wiki.mozilla.org/Android
+
+^-- Bleh, requires NSPR etc, isn’t really smaller. Also tough to build
+against:
+
+hg spidermonkey configure:
+
+../configure \
+--target=arm-android-eabi \
+--with-android-ndk=/home/apage43/android-ndk-r3 \
+--with-endian=little \
+--with-arm-kuser \
+--disable-tests
+
+Don’t do this. Spidermonkey hg trunk doesn’t like evalcx in couchjs.
+
+tests use STL so are disabled for android
+
+
+Android CouchDB Notes
+=======================================================================
+
+Set ANDROID_SYS_ROOT before building erlang or crypto, ssl, etc will not build.
+
+Build system libs live in android_build/out/target/product/generic
+Headers live in android_build/external or in opencore
+
+./configure \
+--prefix=/sdcard/couch \
+--with-js-include=/home/apage43/mcdb/js/src/build-rel/dist/include/ \
+--with-js-lib=/home/apage43/mcdb/js/src/build-rel/dist/lib/ \
+--host=arm-eabi \
+CC=agcc \
+--with-android=/home/apage43/android_build \
+--with-erlang=/home/apage43/mcdb/otp_rel/usr/include/ \
+--with-android-curl=/home/apage43/mcdb/curl
+
+
+collation driver:
+
+agcc -shared -o couch_icu_driver.so libcouch_icu_driver.a
+-L/home/apage43/android_build/out/target/product/generic/system/lib
+-licuuc -licudata -licui18n
+-L/home/apage43/mcdb/otp_rel/erts-5.7.5/bin/ -lbeam

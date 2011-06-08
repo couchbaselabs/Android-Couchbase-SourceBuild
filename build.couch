@@ -5,16 +5,16 @@ source scripts/env
 
 cd $COUCH_ANDROID_HOME/build/deps/
 rm -rf couchdb
-#rm -rf /sdcard/*
+rm -rf /sdcard/*
 git clone -b android git://github.com/daleharvey/couchdb.git -b android
 cd couchdb
 
 # Android Build Support from https://github.com/apage43/couchdb/tree/0.11.x-android
 # Mozilla JS compatibility by chrisccoulson from jsapi@irc.mozilla.org
-# Fixes for Android by matt.adams-couch@radicaldynamic.com
+# Fixes for Android by matt.adams@radicaldynamic.com
 ./bootstrap
 
-ANDROID_SDK=$COUCH_ANDROID_HOME/build/deps/android
+ANDROID_SDK=$COUCH_ANDROID_HOME/build/deps/android/$ANDROID_TARGET
 
 ERL=$COUCH_ANDROID_HOME/build/deps/otp/bootstrap/bin/erl \
 ERLC=$COUCH_ANDROID_HOME/build/deps/otp/bootstrap/bin/erlc \

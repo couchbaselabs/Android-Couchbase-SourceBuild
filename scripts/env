@@ -2,11 +2,12 @@
 
 export COUCH_ANDROID_HOME=$(pwd)
 export ANDROID_APP_NAME="com.test.couch"
+export ANDROID_TARGET=froyo
 
 paths="
 $(pwd)/scripts
 $(pwd)/build/deps/android/other/apk
-$(pwd)/build/deps/android/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin/
+$(pwd)/build/deps/android/$ANDROID_TARGET/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin/
 "
 
 for i in $paths

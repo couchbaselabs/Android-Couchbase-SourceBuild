@@ -10,8 +10,7 @@ rm -rf otp_rel
 git clone git://github.com/daleharvey/otp.git -b android
 cd otp
 
-export ANDROID_SDK=$HOME/build/deps/android/sdk
-export ANDROID_SYS_ROOT=$ANDROID_SDK/sources
+export ANDROID_SYS_ROOT=$COUCH_ANDROID_HOME/build/deps/android/$ANDROID_TARGET
 
 ./otp_build autoconf
 ./otp_build configure --xcomp-conf=xcomp/erl-xcomp-android.conf

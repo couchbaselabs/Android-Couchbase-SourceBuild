@@ -1,0 +1,33 @@
+These notes pertain to building openssl without building the entire
+Android ecosystem.  Since we don't do this anymore these notes are for
+hysterical raisins only.
+
+----
+
+# Get the source.
+git clone git://android.git.kernel.org/platform/external/openssl.git
+
+# Go into the directory.
+cd openssl
+
+# Trick the NDK into thinking this is the project dir. This is the easiest and only way I could find to do it.
+touch AndroidManifest.xml
+
+# Give the NDK build system the Application.mk it needs. I couldn't find a way to specify this manually, and it seems the jni bit is hardcoded.
+mkdir jni
+echo "APP_PROJECT_PATH := $(pwd)" >> jni/Application.mk
+echo "APP_BUILD_SCRIPT := $(APP_PROJECT_PATH)/Android.mk" >> jni/Application.mk
+
+# Edit all the Android.mk's.
+nano crypto/Android.mk
+nano apps/Android.mk
+nano ssl/Android.mk
+
+# In all of them you need to replace "external/openssl" with "$(NDK_PROJECT_PATH)". Also in crypto/Android.mk you need to comment out the assembly stuff so that it always uses aes/aes_core.c
+# Obviously you won't have any assembly optimisations then, but I couldn't get them to work. :-/
+
+# Finally run:
+path/to/android-ndk-r4b/ndk-build -j2
+
+# libcrypto.so and libssl.so are in
+cd libs/armeabi 

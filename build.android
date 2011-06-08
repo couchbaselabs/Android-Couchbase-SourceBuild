@@ -4,10 +4,10 @@
 source scripts/env
 
 cd $COUCH_ANDROID_HOME
-mkdir -p build/deps/android
-cd build/deps/android
+mkdir -p build/deps/android/$ANDROID_TARGET
+cd build/deps/android/$ANDROID_TARGET
 
-repo init -u git://android.git.kernel.org/platform/manifest.git -b froyo
+repo init -u git://android.git.kernel.org/platform/manifest.git -b $ANDROID_TARGET
 repo sync
 
 source build/envsetup.sh
