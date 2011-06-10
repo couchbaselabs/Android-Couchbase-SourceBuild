@@ -5,7 +5,7 @@ source scripts/env
 ##
 # Build release numbers should follow the convention expected by couch-android-launcher.
 # E.g., 8-1.1 which translates to "build for froyo, version 1.1"
-# 
+#
 if [ -z "$1" ]; then
     echo "Give me a release number bub!"
     exit 1
@@ -39,6 +39,10 @@ rm -rf erts-5.7.5/doc erts-5.7.5/include erts-5.7.5/man erts-5.7.5/src misc rele
 cd lib
 
 rm -rf !(crypto-1.6.4|erts-5.7.5|inets-5.3|kernel-2.13.5|public_key-0.5|sasl-2.1.9|ssl-3.10.8|stdlib-1.16.5|xmerl-1.2.4)
+
+cd xmerl-1.2.4/ebin/
+rm !(xmerl_ucs.beam)
+cd ../..
 
 # Remove vestigal files
 find . -depth -name src -type d -exec rm -rf {} \;
