@@ -44,6 +44,13 @@ cd xmerl-1.2.4/ebin/
 rm !(xmerl_ucs.beam)
 cd ../..
 
+cd inets-5.3/ebin/
+rm !(httpd_util.beam|httpd_util|inets.app)
+cd ../..
+rm -rf inets-5.3/priv
+rm public_key-0.5/asn1/OTP-PUB-KEY.erl
+rm ssl-3.10.8/pkix/OTP-PKIX.erl
+
 # Remove vestigal files
 find . -depth -name src -type d -exec rm -rf {} \;
 find . -depth -name doc -type d -exec rm -rf {} \;
@@ -92,8 +99,8 @@ agcc \
 # (Futon is in www)
 #
 cd $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/couchdb
-#rm -rf share/couchdb/www share/doc share/man
-rm -rf share/doc share/man
+rm -rf share/couchdb/www share/doc share/man
+rm -rf lib/couchdb/erlang/lib/etap/
 cd $COUCH_ANDROID_HOME
 
 ##
