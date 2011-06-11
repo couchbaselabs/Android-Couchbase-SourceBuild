@@ -1,6 +1,6 @@
-diff -ru release.bak/sdcard/Android/data/com.test.couch/couchdb/bin/couchdb release/sdcard/Android/data/com.test.couch/couchdb/bin/couchdb
---- release.bak/sdcard/Android/data/com.test.couch/couchdb/bin/couchdb	2011-02-05 01:26:00.000000000 -0700
-+++ release/sdcard/Android/data/com.test.couch/couchdb/bin/couchdb	2011-02-08 16:42:00.000000000 -0700
+diff -ru release.bak/couchdb/bin/couchdb release/couchdb/bin/couchdb
+--- release.bak/couchdb/bin/couchdb	2011-02-05 01:26:00.000000000 -0700
++++ release/couchdb/bin/couchdb	2011-02-08 16:42:00.000000000 -0700
 @@ -12,6 +12,9 @@
  # License for the specific language governing permissions and limitations under
  # the License.
@@ -22,9 +22,9 @@ diff -ru release.bak/sdcard/Android/data/com.test.couch/couchdb/bin/couchdb rele
      if test "$BACKGROUND" = "true" -a "$RECURSED" = "false"; then
          $0 $background_start_arguments -b -r $RESPAWN_TIMEOUT -p $PID_FILE \
              -o $STDOUT_FILE -e $STDERR_FILE -R &
-diff -ru release.bak/sdcard/Android/data/com.test.couch/couchdb/etc/couchdb/local.ini release/sdcard/Android/data/com.test.couch/couchdb/etc/couchdb/local.ini
---- release.bak/sdcard/Android/data/com.test.couch/couchdb/etc/couchdb/local.ini	2011-02-05 01:26:00.000000000 -0700
-+++ release/sdcard/Android/data/com.test.couch/couchdb/etc/couchdb/local.ini	2011-02-08 15:58:30.000000000 -0700
+diff -ru release.bak/couchdb/etc/couchdb/local.ini release/couchdb/etc/couchdb/local.ini
+--- release.bak/couchdb/etc/couchdb/local.ini	2011-02-05 01:26:00.000000000 -0700
++++ release/couchdb/etc/couchdb/local.ini	2011-02-08 15:58:30.000000000 -0700
 @@ -5,23 +5,30 @@
  ; overwritten on server upgrade.
 
@@ -61,9 +61,9 @@ diff -ru release.bak/sdcard/Android/data/com.test.couch/couchdb/etc/couchdb/loca
 
  ; To enable Virtual Hosts in CouchDB, add a vhost = path directive. All requests to
  ; the Virual Host will be redirected to the path. In the example below all requests
-diff -ruN release.bak/sdcard/Android/data/com.test.couch/couchdb/bin/couchjs release/sdcard/Android/data/com.test.couch/couchdb/bin/couchjs
---- release.bak/sdcard/Android/data/com.test.couch/couchdb/bin/couchjs	2011-02-05 01:26:00.000000000 -0700
-+++ release/sdcard/Android/data/com.test.couch/couchdb/bin/couchjs	2011-02-05 01:37:12.000000000 -0700
+diff -ruN release.bak/couchdb/bin/couchjs release/couchdb/bin/couchjs
+--- release.bak/couchdb/bin/couchjs	2011-02-05 01:26:00.000000000 -0700
++++ release/couchdb/bin/couchjs	2011-02-05 01:37:12.000000000 -0700
 @@ -1,4 +1,4 @@
 -#! /bin/sh -e
 +#!/system/bin/sh -e
@@ -79,26 +79,26 @@ diff -ruN release.bak/sdcard/Android/data/com.test.couch/couchdb/bin/couchjs rel
  }
 
  parse_script_option_list () {
-diff -ruN release.bak/sdcard/Android/data/com.test.couch/couchdb/bin/couchjs_wrapper release/sdcard/Android/data/com.test.couch/couchdb/bin/couchjs_wrapper
---- release.bak/sdcard/Android/data/com.test.couch/couchdb/bin/couchjs_wrapper	1969-12-31 17:00:00.000000000 -0700
-+++ release/sdcard/Android/data/com.test.couch/couchdb/bin/couchjs_wrapper	2011-02-05 01:39:28.000000000 -0700
+diff -ruN release.bak/couchdb/bin/couchjs_wrapper release/bin/couchjs_wrapper
+--- release.bak/couchdb/bin/couchjs_wrapper	1969-12-31 17:00:00.000000000 -0700
++++ release/couchdb/bin/couchjs_wrapper	2011-02-05 01:39:28.000000000 -0700
 @@ -0,0 +1,3 @@
 +#!/system/bin/sh
 +export LD_LIBRARY_PATH=/data/data/com.test.couch/couchdb/lib/couchdb/bin
 +exec /data/data/com.test.couch/couchdb/lib/couchdb/bin/couchjs $@
 \ No newline at end of file
-diff -ruN release.bak/sdcard/Android/data/com.test.couch/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable release/sdcard/Android/data/com.test.couch/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable
---- release.bak/sdcard/Android/data/com.test.couch/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable	2011-02-05 01:26:00.000000000 -0700
-+++ release/sdcard/Android/data/com.test.couch/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable	2011-02-05 01:48:49.000000000 -0700
+diff -ruN release.bak/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable release/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable
+--- release.bak/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable	2011-02-05 01:26:00.000000000 -0700
++++ release/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable	2011-02-05 01:48:49.000000000 -0700
 @@ -1,4 +1,4 @@
 -#! /bin/sh -e
 +#!/system/bin/sh -e
 
  # Licensed under the Apache License, Version 2.0 (the "License"); you may not
  # use this file except in compliance with the License. You may obtain a copy of
-diff -ruN release.bak/sdcard/Android/data/com.test.couch/erlang/bin/erl release/sdcard/Android/data/com.test.couch/erlang/bin/erl
---- release.bak/sdcard/Android/data/com.test.couch/erlang/bin/erl	2011-02-05 01:28:07.000000000 -0700
-+++ release/sdcard/Android/data/com.test.couch/erlang/bin/erl	2011-02-05 01:49:29.000000000 -0700
+diff -ruN release.bak/erlang/bin/erl release/erlang/bin/erl
+--- release.bak/erlang/bin/erl	2011-02-05 01:28:07.000000000 -0700
++++ release/erlang/bin/erl	2011-02-05 01:49:29.000000000 -0700
 @@ -1,4 +1,4 @@
 -#!/bin/sh
 +#!/system/bin/sh
@@ -113,84 +113,75 @@ diff -ruN release.bak/sdcard/Android/data/com.test.couch/erlang/bin/erl release/
  export EMU
  export ROOTDIR
  export BINDIR
-diff -ruN release.bak/sdcard/Android/data/com.test.couch/erlang/bin/erl_inetrc release/sdcard/Android/data/com.test.couch/erlang/bin/erl_inetrc
---- release.bak/sdcard/Android/data/com.test.couch/erlang/bin/erl_inetrc	1969-12-31 17:00:00.000000000 -0700
-+++ release/sdcard/Android/data/com.test.couch/erlang/bin/erl_inetrc	2011-02-05 01:49:58.000000000 -0700
+diff -ruN release.bak/erlang/bin/erl_inetrc release/erlang/bin/erl_inetrc
+--- release.bak/erlang/bin/erl_inetrc	1969-12-31 17:00:00.000000000 -0700
++++ release/erlang/bin/erl_inetrc	2011-02-05 01:49:58.000000000 -0700
 @@ -0,0 +1,4 @@
 +%% Use erlang's internal resolver. Native DNS on android is annoying
 +{lookup, [file,dns]}.
 +%% TODO: Not this,
 +{nameserver, {8,8,8,8}}.
 \ No newline at end of file
-diff -ru release.bak/sdcard/Android/data/com.test.couch/erlang/bin/start release/sdcard/Android/data/com.test.couch/erlang/bin/start
---- release.bak/sdcard/Android/data/com.test.couch/erlang/bin/start	2011-02-05 01:57:26.000000000 -0700
-+++ release/sdcard/Android/data/com.test.couch/erlang/bin/start	2011-02-05 02:05:54.000000000 -0700
+diff -ru release.bak/erlang/bin/start release/erlang/bin/start
+--- release.bak/erlang/bin/start	2011-02-05 01:57:26.000000000 -0700
++++ release/erlang/bin/start	2011-02-05 02:05:54.000000000 -0700
 @@ -1,4 +1,4 @@
 -#!/bin/sh
 +#!/system/bin/sh
  #
  # %CopyrightBegin%
  #
-diff -ru release.bak/sdcard/Android/data/com.test.couch/erlang/bin/start_erl release/sdcard/Android/data/com.test.couch/erlang/bin/start_erl
---- release.bak/sdcard/Android/data/com.test.couch/erlang/bin/start_erl	2011-02-05 01:57:26.000000000 -0700
-+++ release/sdcard/Android/data/com.test.couch/erlang/bin/start_erl	2011-02-05 02:05:48.000000000 -0700
+diff -ru release.bak/erlang/bin/start_erl release/erlang/bin/start_erl
+--- release.bak/erlang/bin/start_erl	2011-02-05 01:57:26.000000000 -0700
++++ release/erlang/bin/start_erl	2011-02-05 02:05:48.000000000 -0700
 @@ -1,4 +1,4 @@
 -#!/bin/sh
 +#!/system/bin/sh
  #
  #
  # %CopyrightBegin%
-diff -ru release.bak/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/erl release/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/erl
---- release.bak/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/erl	2011-02-05 01:57:26.000000000 -0700
-+++ release/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/erl	2011-02-05 02:06:04.000000000 -0700
+diff -ru release.bak/erlang/erts-5.7.5/bin/erl release/erlang/erts-5.7.5/bin/erl
+--- release.bak/erlang/erts-5.7.5/bin/erl	2011-02-05 01:57:26.000000000 -0700
++++ release/erlang/erts-5.7.5/bin/erl	2011-02-05 02:06:04.000000000 -0700
 @@ -1,4 +1,4 @@
 -#!/bin/sh
 +#!/system/bin/sh
  #
  # %CopyrightBegin%
  #
-diff -ru release.bak/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/erl.src release/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/erl.src
---- release.bak/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/erl.src	2011-02-05 01:23:30.000000000 -0700
-+++ release/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/erl.src	2011-02-05 02:06:01.000000000 -0700
+diff -ru release.bak/erlang/erts-5.7.5/bin/erl.src release/erlang/erts-5.7.5/bin/erl.src
+--- release.bak/erlang/erts-5.7.5/bin/erl.src	2011-02-05 01:23:30.000000000 -0700
++++ release/erlang/erts-5.7.5/bin/erl.src	2011-02-05 02:06:01.000000000 -0700
 @@ -1,4 +1,4 @@
 -#!/bin/sh
 +#!/system/bin/sh
  #
  # %CopyrightBegin%
  #
-diff -ru release.bak/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/start release/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/start
---- release.bak/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/start	2011-02-05 01:57:26.000000000 -0700
-+++ release/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/start	2011-02-05 02:06:09.000000000 -0700
+diff -ru release.bak/erlang/erts-5.7.5/bin/start release/erlang/erts-5.7.5/bin/start
+--- release.bak/erlang/erts-5.7.5/bin/start	2011-02-05 01:57:26.000000000 -0700
++++ release/erlang/erts-5.7.5/bin/start	2011-02-05 02:06:09.000000000 -0700
 @@ -1,4 +1,4 @@
 -#!/bin/sh
 +#!/system/bin/sh
  #
  # %CopyrightBegin%
  #
-diff -ru release.bak/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/start_erl.src release/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/start_erl.src
---- release.bak/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/start_erl.src	2011-02-05 01:23:30.000000000 -0700
-+++ release/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/start_erl.src	2011-02-05 02:06:06.000000000 -0700
+diff -ru release.bak/erlang/erts-5.7.5/bin/start_erl.src release/erlang/erts-5.7.5/bin/start_erl.src
+--- release.bak/erlang/erts-5.7.5/bin/start_erl.src	2011-02-05 01:23:30.000000000 -0700
++++ release/erlang/erts-5.7.5/bin/start_erl.src	2011-02-05 02:06:06.000000000 -0700
 @@ -1,4 +1,4 @@
 -#!/bin/sh
 +#!/system/bin/sh
  #
  #
  # %CopyrightBegin%
-diff -ru release.bak/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/start.src release/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/start.src
---- release.bak/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/start.src	2011-02-05 01:23:30.000000000 -0700
-+++ release/sdcard/Android/data/com.test.couch/erlang/erts-5.7.5/bin/start.src	2011-02-05 02:05:58.000000000 -0700
-@@ -1,4 +1,4 @@
+diff -ru release.bak/erlang/erts-5.7.5/bin/start.src release/erlang/erts-5.7.5/bin/start.src
+--- release.bak/erlang/erts-5.7.5/bin/start.src	2011-02-05 01:23:30.000000000 -0700
++++ release/erlang/erts-5.7.5/bin/start.src	2011-02-05 02:05:58.000000000 -0700
+@@ -1,3 +1,3 @@
 -#!/bin/sh
 +#!/system/bin/sh
  #
  # %CopyrightBegin%
  #
-diff -ru release.bak/sdcard/Android/data/com.test.couch/erlang/lib/inets-5.3/priv/bin/runcgi.sh release/sdcard/Android/data/com.test.couch/erlang/lib/inets-5.3/priv/bin/runcgi.sh
---- release.bak/sdcard/Android/data/com.test.couch/erlang/lib/inets-5.3/priv/bin/runcgi.sh	2011-02-05 01:22:58.000000000 -0700
-+++ release/sdcard/Android/data/com.test.couch/erlang/lib/inets-5.3/priv/bin/runcgi.sh	2011-02-05 02:06:14.000000000 -0700
-@@ -1,4 +1,4 @@
--#!/bin/sh
-+#!/system/bin/sh
- cd $1
- shift
- exec env "$@"

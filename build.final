@@ -15,7 +15,7 @@ DATE=$(date +"%Y-%m-%d_%H-%M-%S")
 REL_NAME="release-$DATE"
 REL_PATH="out/$REL_NAME"
 
-mkdir -p $REL_PATH/data/data/$ANDROID_APP_NAME
+mkdir -p $REL_PATH
 
 ##
 # Configure and package Erlang/OTP
@@ -30,6 +30,11 @@ rm Install
 
 # Necessary?
 chmod -x erts-5.7.5/bin/start_erl.src erts-5.7.5/bin/start.src
+#chmod +x bin/start.boot
+#chmod +x bin/erl_inetrc
+#chmod +x bin/start_clean.boot
+#chmod +x bin/start_sasl.boot
+#chmod +x bin/start.script
 
 # Remove unnecessary files
 shopt -s extglob
@@ -63,11 +68,11 @@ cd $COUCH_ANDROID_HOME
 # Finally move things into place
 #
 
-cp -Rdp /sdcard $REL_PATH/sdcard
-mv build/deps/otp_rel.package $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/erlang
+cp -Rdp /sdcard/Android/data/com.test.couch/couchdb $REL_PATH/couchdb
+mv build/deps/otp_rel.package $REL_PATH/erlang
 
 # We need the shared lib because our toolchain does not support the static lib (libstdc++ stuff)
-cp build/deps/mozilla-current/mozilla-central/js/src/libmozjs.so $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/couchdb/lib/couchdb/bin
+cp build/deps/mozilla-current/mozilla-central/js/src/libmozjs.so $REL_PATH/couchdb/bin
 
 ###
 # 2) Create couchjs_wrapper script (because we can't link to libmozjs.a and so need LD_LIBRARY_PATH set)
@@ -79,15 +84,15 @@ ln -s $REL_PATH release
 patch -lp0 < patches/release.patch
 rm release
 
-chmod +x $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/couchdb/bin/couchjs_wrapper
+chmod +x $REL_PATH/couchdb/bin/couchjs_wrapper
 
 # Store database and variable state in a directory that is safe from upgrades
-mkdir $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/db
+mkdir $REL_PATH/db
 
 # Build ICU for whatever version of Android was compiled in ~/software/android/sdk/sources
 agcc \
 -shared \
--o $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/couchdb/lib/couchdb/couch_icu_driver.so $COUCH_ANDROID_HOME/build/deps/couchdb/src/couchdb/priv/.libs/libcouch_icu_driver.a \
+-o $REL_PATH/couchdb/lib/couchdb/couch_icu_driver.so $COUCH_ANDROID_HOME/build/deps/couchdb/src/couchdb/priv/.libs/libcouch_icu_driver.a \
 -licuuc \
 -licudata \
 -licui18n \
@@ -98,7 +103,7 @@ agcc \
 # Remove vestigal files from Couch directory
 # (Futon is in www)
 #
-cd $REL_PATH/sdcard/Android/data/$ANDROID_APP_NAME/couchdb
+cd $REL_PATH/couchdb
 rm -rf share/couchdb/www share/doc share/man
 rm -rf lib/couchdb/erlang/lib/etap/
 cd $COUCH_ANDROID_HOME
@@ -106,7 +111,9 @@ cd $COUCH_ANDROID_HOME
 ##
 # Archive the release
 #
+cp files_to_copy.index $REL_PATH
+
 cd $REL_PATH
 touch filecount.$(find | wc -l)
-tar -czf ../release-$1.tgz filecount.* data sdcard
+tar -czf ../release-$1.tgz *
 cd ..
