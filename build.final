@@ -68,7 +68,7 @@ cd $COUCH_ANDROID_HOME
 # Finally move things into place
 #
 
-cp -Rdp /sdcard/Android/data/com.test.couch/couchdb $REL_PATH/couchdb
+cp -Rdp /sdcard/Android/data/%app_name%/couchdb $REL_PATH/couchdb
 mv build/deps/otp_rel.package $REL_PATH/erlang
 
 # We need the shared lib because our toolchain does not support the static lib (libstdc++ stuff)

@@ -5,23 +5,20 @@ diff -ru release.bak/couchdb/bin/couchdb release/couchdb/bin/couchdb
  # License for the specific language governing permissions and limitations under
  # the License.
 
-+export HOME=/data/data/com.test.couch
++export HOME=/data/data/%app_name%
 +export LD_LIBRARY_PATH=$HOME/erlang/erts-5.7.5/bin:$HOME/couchdb/bin:$HOME/couchdb/lib/couchdb/bin
 +export PATH=$HOME/erlang/bin:$HOME/couchdb/bin:$PATH
  BACKGROUND=false
- DEFAULT_CONFIG_DIR=/sdcard/Android/data/com.test.couch/couchdb/etc/couchdb/default.d
- DEFAULT_CONFIG_FILE=/sdcard/Android/data/com.test.couch/couchdb/etc/couchdb/default.ini
-@@ -222,8 +225,8 @@
+ DEFAULT_CONFIG_DIR=/sdcard/Android/data/%app_name%/couchdb/etc/couchdb/default.d
+ DEFAULT_CONFIG_FILE=/sdcard/Android/data/%app_name%/couchdb/etc/couchdb/default.ini
+@@ -222,5 +222,5 @@
          touch $PID_FILE
          interactive_option="+Bd -noinput"
      fi
 -    command="/home/dale/lib/build-android-couch/build/deps/otp/bootstrap/bin/erl $interactive_option $ERL_START_OPTIONS \
--        -env ERL_LIBS /sdcard/Android/data/com.test.couch/couchdb/lib/couchdb/erlang/lib -couch_ini $start_arguments -s couch"
+-        -env ERL_LIBS /sdcard/Android/data/%app_name%/couchdb/lib/couchdb/erlang/lib -couch_ini $start_arguments -s couch"
 +    command="erl $interactive_option $ERL_START_OPTIONS \
-+        -env ERL_LIBS /data/data/com.test.couch/couchdb/lib/couchdb/erlang/lib -couch_ini $start_arguments -s couch"
-     if test "$BACKGROUND" = "true" -a "$RECURSED" = "false"; then
-         $0 $background_start_arguments -b -r $RESPAWN_TIMEOUT -p $PID_FILE \
-             -o $STDOUT_FILE -e $STDERR_FILE -R &
++        -env ERL_LIBS /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib -couch_ini $start_arguments -s couch"
 diff -ru release.bak/couchdb/etc/couchdb/local.ini release/couchdb/etc/couchdb/local.ini
 --- release.bak/couchdb/etc/couchdb/local.ini	2011-02-05 01:26:00.000000000 -0700
 +++ release/couchdb/etc/couchdb/local.ini	2011-02-08 15:58:30.000000000 -0700
@@ -29,11 +26,11 @@ diff -ru release.bak/couchdb/etc/couchdb/local.ini release/couchdb/etc/couchdb/l
  ; overwritten on server upgrade.
 
  [couchdb]
-+database_dir = /sdcard/Android/data/com.test.couch/db
-+view_index_dir = /sdcard/Android/data/com.test.couch/db
-+util_driver_dir = /data/data/com.test.couch/couchdb/lib/couchdb
++database_dir = /sdcard/Android/data/%app_name%/db
++view_index_dir = /sdcard/Android/data/%app_name%/db
++util_driver_dir = /data/data/%app_name%/couchdb/lib/couchdb
  ;max_document_size = 4294967296 ; bytes
-+uri_file = /sdcard/Android/data/com.test.couch/db/couch.uri
++uri_file = /sdcard/Android/data/%app_name%/db/couch.uri
 
  [httpd]
 -;port = 5984
@@ -44,7 +41,7 @@ diff -ru release.bak/couchdb/etc/couchdb/local.ini release/couchdb/etc/couchdb/l
  ;WWW-Authenticate = Basic realm="administrator"
 
 +[log]
-+file = /sdcard/Android/data/com.test.couch/db/couch.log
++file = /sdcard/Android/data/%app_name%/db/couch.log
 +level = debug
 +
  [couch_httpd_auth]
@@ -57,7 +54,7 @@ diff -ru release.bak/couchdb/etc/couchdb/local.ini release/couchdb/etc/couchdb/l
 -;level = debug
 -
 +[query_servers]
-+javascript = /data/data/com.test.couch/couchdb/bin/couchjs_wrapper /data/data/com.test.couch/couchdb/share/couchdb/server/main.js
++javascript = /data/data/%app_name%/couchdb/bin/couchjs_wrapper /data/data/%app_name%/couchdb/share/couchdb/server/main.js
 
  ; To enable Virtual Hosts in CouchDB, add a vhost = path directive. All requests to
  ; the Virual Host will be redirected to the path. In the example below all requests
@@ -74,8 +71,8 @@ diff -ruN release.bak/couchdb/bin/couchjs release/couchdb/bin/couchjs
  }
 
  run_couchjs () {
--    exec /sdcard/Android/data/com.test.couch/couchdb/lib/couchdb/bin/couchjs $@
-+    exec LD_LIBRARY_PATH=/data/data/com.test.couch/couchdb/lib/couchdb/bin /data/data/com.test.couch/couchdb/lib/couchdb/bin/couchjs $@
+-    exec /sdcard/Android/data/%app_name%/couchdb/lib/couchdb/bin/couchjs $@
++    exec LD_LIBRARY_PATH=/data/data/%app_name%/couchdb/lib/couchdb/bin /data/data/%app_name%/couchdb/lib/couchdb/bin/couchjs $@
  }
 
  parse_script_option_list () {
@@ -84,8 +81,8 @@ diff -ruN release.bak/couchdb/bin/couchjs_wrapper release/bin/couchjs_wrapper
 +++ release/couchdb/bin/couchjs_wrapper	2011-02-05 01:39:28.000000000 -0700
 @@ -0,0 +1,3 @@
 +#!/system/bin/sh
-+export LD_LIBRARY_PATH=/data/data/com.test.couch/couchdb/lib/couchdb/bin
-+exec /data/data/com.test.couch/couchdb/lib/couchdb/bin/couchjs $@
++export LD_LIBRARY_PATH=/data/data/%app_name%/couchdb/lib/couchdb/bin
++exec /data/data/%app_name%/couchdb/lib/couchdb/bin/couchjs $@
 \ No newline at end of file
 diff -ruN release.bak/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable release/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable
 --- release.bak/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable	2011-02-05 01:26:00.000000000 -0700

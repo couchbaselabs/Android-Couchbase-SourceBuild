@@ -4,9 +4,9 @@
 source scripts/env
 
 cd $COUCH_ANDROID_HOME/build/deps/
-#rm -rf couchdb
-#rm -rf /sdcard/*
-#git clone -b android git://github.com/daleharvey/couchdb.git -b android
+rm -rf couchdb
+rm -rf /sdcard/*
+git clone -b android git://github.com/daleharvey/couchdb.git -b android
 cd couchdb
 
 # Android Build Support from https://github.com/apage43/couchdb/tree/0.11.x-android
@@ -21,7 +21,7 @@ ERLC=$COUCH_ANDROID_HOME/build/deps/otp/bootstrap/bin/erlc \
 CC=agcc \
 ./configure \
 --host=arm-eabi \
---prefix=/sdcard/Android/data/$ANDROID_APP_NAME/couchdb \
+--prefix=/sdcard/Android/data/%app_name%/couchdb \
 --with-android=$ANDROID_SDK \
 --with-erlang=$COUCH_ANDROID_HOME/build/deps/otp_rel/usr/include \
 --with-js-include=$COUCH_ANDROID_HOME/build/deps/mozilla-current/mozilla-central/js/src/dist/include \
