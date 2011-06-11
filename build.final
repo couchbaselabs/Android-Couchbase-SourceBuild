@@ -115,5 +115,5 @@ cp files_to_copy.index $REL_PATH
 
 cd $REL_PATH
 touch filecount.$(find | wc -l)
-tar -czf ../release-$1.tgz *
+tar -czf ../release-$1.tgz filecount.* !(filecount.*)
 cd ..
