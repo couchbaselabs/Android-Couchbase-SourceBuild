@@ -4,9 +4,9 @@
 source scripts/env
 
 cd $COUCH_ANDROID_HOME/build/deps/
-rm -rf couchdb
+#rm -rf couchdb
 rm -rf /sdcard/*
-git clone -b android git://github.com/daleharvey/couchdb.git -b android
+#git clone -b android git://github.com/daleharvey/couchdb.git -b android
 cd couchdb
 
 # Android Build Support from https://github.com/apage43/couchdb/tree/0.11.x-android
