@@ -28,14 +28,6 @@ cd build/deps/otp_rel.package
 ./Install -cross -sasl /data/data/%app_name%/erlang
 rm Install
 
-# Necessary?
-chmod -x erts-5.7.5/bin/start_erl.src erts-5.7.5/bin/start.src
-#chmod +x bin/start.boot
-#chmod +x bin/erl_inetrc
-#chmod +x bin/start_clean.boot
-#chmod +x bin/start_sasl.boot
-#chmod +x bin/start.script
-
 # Remove unnecessary files
 shopt -s extglob
 
