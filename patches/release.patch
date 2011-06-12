@@ -28,8 +28,8 @@ diff -ru release.bak/couchdb/etc/couchdb/local.ini release/couchdb/etc/couchdb/l
  [httpd]
 -;port = 5984
 -;bind_address = 127.0.0.1
-+port = 5984
-+bind_address = 127.0.0.1
++port = 0
++bind_address = 0.0.0.0
  ; Uncomment next line to trigger basic-auth popup on unauthorized requests.
  ;WWW-Authenticate = Basic realm="administrator"
 
@@ -74,7 +74,7 @@ diff -ruN release.bak/couchdb/bin/couchjs_wrapper release/bin/couchjs_wrapper
 +++ release/couchdb/bin/couchjs_wrapper	2011-02-05 01:39:28.000000000 -0700
 @@ -0,0 +1,3 @@
 +#!/system/bin/sh
-+export LD_LIBRARY_PATH=/data/data/%app_name%/couchdb/lib/couchdb/bin
++export LD_LIBRARY_PATH=/data/data/%app_name%/couchdb/bin
 +exec /data/data/%app_name%/couchdb/lib/couchdb/bin/couchjs $@
 \ No newline at end of file
 diff -ruN release.bak/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable release/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable
