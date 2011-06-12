@@ -73,6 +73,8 @@ cp build/deps/mozilla-current/mozilla-central/js/src/libmozjs.so $REL_PATH/couch
 #
 [[ -f release ]] && rm release
 ln -s $REL_PATH release
+mkdir -p release/couchdb/lib/couchdb/android_icu
+cp -r android_icu release/couchdb/lib/couchdb
 patch -lp0 < patches/release.patch
 rm release
 
@@ -84,7 +86,7 @@ mkdir $REL_PATH/db
 # Build ICU for whatever version of Android was compiled in ~/software/android/sdk/sources
 agcc \
 -shared \
--o $REL_PATH/couchdb/lib/couchdb/couch_icu_driver.so $COUCH_ANDROID_HOME/build/deps/couchdb/src/couchdb/priv/.libs/libcouch_icu_driver.a \
+-o $REL_PATH/couchdb/lib/couchdb/$ANDROID_TARGET/couch_icu_driver.so $COUCH_ANDROID_HOME/build/deps/couchdb/src/couchdb/priv/.libs/libcouch_icu_driver.a \
 -licuuc \
 -licudata \
 -licui18n \

@@ -21,7 +21,7 @@ diff -ru release.bak/couchdb/etc/couchdb/local.ini release/couchdb/etc/couchdb/l
  [couchdb]
 +database_dir = /sdcard/Android/data/%app_name%/db
 +view_index_dir = /sdcard/Android/data/%app_name%/db
-+util_driver_dir = /data/data/%app_name%/couchdb/lib/couchdb
++util_driver_dir = /data/data/%app_name%/couchdb/lib/couchdb/android_icu/%sdk_int%
  ;max_document_size = 4294967296 ; bytes
 +uri_file = /sdcard/Android/data/%app_name%/db/couch.uri
 
