@@ -23,9 +23,10 @@ CC=agcc \
 --host=arm-eabi \
 --prefix=/sdcard/Android/data/%app_name%/couchdb \
 --with-android=$ANDROID_SDK \
+--with-android-curl=$COUCH_ANDROID_HOME/build/deps/curl-7.20.0 \
 --with-erlang=$COUCH_ANDROID_HOME/build/deps/otp_rel/usr/include \
 --with-js-include=$COUCH_ANDROID_HOME/build/deps/mozilla-current/mozilla-central/js/src/dist/include \
 --with-js-lib="$COUCH_ANDROID_HOME/build/deps/mozilla-current/mozilla-central/js/src"
 
-make -scon
+make -s
 make install
