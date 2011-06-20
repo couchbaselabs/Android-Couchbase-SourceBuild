@@ -34,7 +34,7 @@ shopt -s extglob
 rm -rf erts-5.7.5/doc erts-5.7.5/include erts-5.7.5/man erts-5.7.5/src misc releases usr
 
 rm bin/dialyzer bin/erlc bin/escript bin/run_erl bin/to_erl bin/typer
-rm erts-5.7.5/bin/dialyzer erts-5.7.5/bin/erlc erts-5.7.5/bin/escript erts-5.7.5/bin/run_erl erts-5.7.5/bin/to_erl bin/typer
+rm erts-5.7.5/bin/dialyzer erts-5.7.5/bin/erlc erts-5.7.5/bin/escript erts-5.7.5/bin/run_erl erts-5.7.5/bin/to_erl erts-5.7.5/bin/typer
 
 cd lib
 
@@ -63,7 +63,7 @@ cd $COUCH_ANDROID_HOME
 # Finally move things into place
 #
 
-cp -Rdp /sdcard/Android/data/%app_name%/couchdb $REL_PATH/couchdb
+cp -Rdp /data/data/%app_name%/cache/couchdb $REL_PATH/couchdb
 mv build/deps/otp_rel.package $REL_PATH/erlang
 
 # We need the shared lib because our toolchain does not support the static lib (libstdc++ stuff)
@@ -82,9 +82,6 @@ patch -lp0 < patches/release.patch
 rm release
 
 chmod +x $REL_PATH/couchdb/bin/couchjs_wrapper
-
-# Store database and variable state in a directory that is safe from upgrades
-mkdir $REL_PATH/db
 
 # Build ICU for whatever version of Android was compiled in ~/software/android/sdk/sources
 agcc \

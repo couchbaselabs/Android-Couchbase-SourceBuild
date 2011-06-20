@@ -6,13 +6,12 @@ diff -ru release.bak/couchdb/bin/couchdb release/couchdb/bin/couchdb
          interactive_option="+Bd -noinput"
      fi
 -    command="/home/dale/lib/build-android-couch/build/deps/otp/bootstrap/bin/erl $interactive_option $ERL_START_OPTIONS \
--        -env ERL_LIBS /sdcard/Android/data/%app_name%/couchdb/lib/couchdb/erlang/lib -couch_ini $start_arguments -s couch"
+-        -env ERL_LIBS /data/data/%app_name%/cache/couchdb/lib/couchdb/erlang/lib -couch_ini $start_arguments -s couch"
 +    command="erl $interactive_option $ERL_START_OPTIONS \
 +        -env ERL_LIBS /data/data/%app_name%/cache/couchdb/lib/couchdb/erlang/lib -couch_ini $start_arguments -s couch"
      if test "$BACKGROUND" = "true" -a "$RECURSED" = "false"; then
          $0 $background_start_arguments -b -r $RESPAWN_TIMEOUT -p $PID_FILE \
              -o $STDOUT_FILE -e $STDERR_FILE -R &
-diff -ru release.bak/couchdb/etc/couchdb/local.ini release/couchdb/etc/couchdb/local.ini
 --- release.bak/couchdb/etc/couchdb/local.ini	2011-02-05 01:26:00.000000000 -0700
 +++ release/couchdb/etc/couchdb/local.ini	2011-02-08 15:58:30.000000000 -0700
 @@ -5,23 +5,30 @@
@@ -29,7 +28,7 @@ diff -ru release.bak/couchdb/etc/couchdb/local.ini release/couchdb/etc/couchdb/l
 -;port = 5984
 -;bind_address = 127.0.0.1
 +port = 0
-+bind_address = 0.0.0.0
++bind_addr              ess = 0.0.0.0
  ; Uncomment next line to trigger basic-auth popup on unauthorized requests.
  ;WWW-Authenticate = Basic realm="administrator"
 
@@ -64,7 +63,7 @@ diff -ruN release.bak/couchdb/bin/couchjs release/couchdb/bin/couchjs
  }
 
  run_couchjs () {
--    exec /sdcard/Android/data/%app_name%/couchdb/lib/couchdb/bin/couchjs $@
+-    exec /data/data/%app_name%/cache/couchdb/lib/couchdb/bin/couchjs $@
 +    exec LD_LIBRARY_PATH=/data/data/%app_name%/cache/couchdb/lib/couchdb/bin /data/data/%app_name%/cache/couchdb/lib/couchdb/bin/couchjs $@
  }
 
