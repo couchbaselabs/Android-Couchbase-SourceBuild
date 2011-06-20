@@ -7,7 +7,7 @@ cd $COUCH_ANDROID_HOME/build/deps
 
 rm -rf otp
 rm -rf otp_rel
-git clone git://github.com/daleharvey/otp.git -b android
+git clone git://github.com/couchbaselabs/otp.git -b android
 cd otp
 
 export ANDROID_SYS_ROOT=$COUCH_ANDROID_HOME/build/deps/android/$ANDROID_TARGET
