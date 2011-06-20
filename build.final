@@ -33,6 +33,9 @@ shopt -s extglob
 
 rm -rf erts-5.7.5/doc erts-5.7.5/include erts-5.7.5/man erts-5.7.5/src misc releases usr
 
+rm bin/dialyzer bin/erlc bin/escript bin/run_erl bin/to_erl bin/typer
+rm erts-5.7.5/bin/dialyzer erts-5.7.5/bin/erlc erts-5.7.5/bin/escript erts-5.7.5/bin/run_erl erts-5.7.5/bin/to_erl bin/typer
+
 cd lib
 
 rm -rf !(crypto-1.6.4|erts-5.7.5|inets-5.3|kernel-2.13.5|public_key-0.5|sasl-2.1.9|ssl-3.10.8|stdlib-1.16.5|xmerl-1.2.4)
@@ -86,7 +89,7 @@ mkdir $REL_PATH/db
 # Build ICU for whatever version of Android was compiled in ~/software/android/sdk/sources
 agcc \
 -shared \
--o $REL_PATH/couchdb/lib/couchdb/$ANDROID_TARGET/couch_icu_driver.so $COUCH_ANDROID_HOME/build/deps/couchdb/src/couchdb/priv/.libs/libcouch_icu_driver.a \
+-o $REL_PATH/couchdb/lib/couchdb/couch_icu_driver.so $COUCH_ANDROID_HOME/build/deps/couchdb/src/couchdb/priv/.libs/libcouch_icu_driver.a \
 -licuuc \
 -licudata \
 -licui18n \
@@ -98,14 +101,19 @@ agcc \
 # (Futon is in www)
 #
 cd $REL_PATH/couchdb
-rm -rf share/couchdb/www share/doc share/man
+rm -rf share/couchdb/www share/doc
+rm -rf share/man
+rm -rf var
+rm -rf etc/init.d
+rm -rf etc/logrotate.d
 rm -rf lib/couchdb/erlang/lib/etap/
+rm lib/couchdb/couch_icu_driver.so
 cd $COUCH_ANDROID_HOME
 
 ##
 # Archive the release
 #
-cp files_to_copy.index $REL_PATH
+#cp files_to_copy.index $REL_PATH
 
 cd $REL_PATH
 touch filecount.$(find | wc -l)
