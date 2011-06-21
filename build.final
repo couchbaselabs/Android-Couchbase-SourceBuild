@@ -105,6 +105,12 @@ rm -rf etc/init.d
 rm -rf etc/logrotate.d
 rm -rf lib/couchdb/erlang/lib/etap/
 rm lib/couchdb/couch_icu_driver.so
+
+cd ..
+
+erl -eval "erlang:display(beam_lib:strip_release(\"couchdb/lib/couchdb/erlang\"))" -s init stop
+erl -eval "erlang:display(beam_lib:strip_release(\"erlang\"))" -s init stop
+
 cd $COUCH_ANDROID_HOME
 
 ##
