@@ -36,6 +36,7 @@ Usage
     $ ./build.js
     $ ./build.otp
     $ ./build.couch
+    $ ./build.geocouch
     $ ./build.final
 
 Credits

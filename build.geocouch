@@ -1,0 +1,14 @@
+#!/bin/bash -x
+#
+
+source scripts/env
+
+cd $COUCH_ANDROID_HOME/build/deps/
+git clone git://github.com/vmx/geocouch.git
+cd geocouch
+
+export COUCH_SRC=../couchdb/src/couchdb
+export ERL=$COUCH_ANDROID_HOME/build/deps/otp/bootstrap/bin/erl
+export ERLC=$COUCH_ANDROID_HOME/build/deps/otp/bootstrap/bin/erlc
+
+make
