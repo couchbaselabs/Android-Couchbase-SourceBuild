@@ -14,7 +14,8 @@ HGREV=bb9089ae2322
 
 [[ -f $HGREV.tar.bz2 ]] || wget http://hg.mozilla.org/mozilla-central/archive/$HGREV.tar.bz2
 
-rm -rf mozilla-central mozilla-central-$HGREV
+[[ -L mozilla-central ]] && rm mozilla-central 
+[[ -d mozilla-central-$HGREV ]] && rm -rf mozilla-central-$HGREV
 tar -jxf $HGREV.tar.bz2
 ln -s mozilla-central-$HGREV mozilla-central
 
@@ -24,3 +25,5 @@ cd mozilla-central
 # toolchain.  However, llog also has a dependency on libstdc++.so which our toolchain
 # DOES NOT have so we need to substitute for something less Androidy (apologies).
 patch -p1 < $COUCH_ANDROID_HOME/patches/mozilla-central.patch
+
+exit 0

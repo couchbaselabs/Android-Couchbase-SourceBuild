@@ -16,3 +16,5 @@ export ANDROID_SYS_ROOT=$COUCH_ANDROID_HOME/build/deps/android/$ANDROID_TARGET
 ./otp_build configure --xcomp-conf=xcomp/erl-xcomp-android.conf
 ./otp_build boot -a
 ./otp_build release -a $(pwd)/../otp_rel
+
+exit 0

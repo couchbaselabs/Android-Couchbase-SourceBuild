@@ -22,6 +22,9 @@ cd $COUCH_ANDROID_HOME/build/deps/mozilla-current/mozilla-central/nsprpub
 --enable-strip
 
 make -s
+MAKESTATUS=$?
 
 # Remove shared libraries so that Couch is built with the static ones
 rm dist/lib/*so
+
+exit $MAKESTATUS

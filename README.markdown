@@ -22,9 +22,9 @@ Compiling android requires the JDK and various system dependancies, you can find
     # Install dependancies
     sudo apt-get install libncurses5-dev git-core gnupg flex bison gperf build-essential zip curl zlib1g-dev libc6-dev autoconf2.13 autoconf2.59 libtool
 
-    # Mimic the sdcard layout on the device
-    sudo mkdir /sdcard
-    sudo chown dale:dale /sdcard
+    # Mimic the data layout on the device
+    sudo mkdir /data
+    sudo chown dale:dale /data
 
 Usage
 =====

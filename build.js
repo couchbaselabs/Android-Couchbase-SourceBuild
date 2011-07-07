@@ -31,3 +31,5 @@ make -s
 #
 #rm libmozjs.so
 #mv libjs_static.a libmozjs.a
+
+exit $?

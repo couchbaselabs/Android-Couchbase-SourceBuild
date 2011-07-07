@@ -41,3 +41,5 @@ CC=agcc \
 --with-zlib=$ANDROID_SDK/sources/external/zlib
 
 make -s
+
+exit $?
