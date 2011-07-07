@@ -4,5 +4,11 @@
 
 for i in android curl resetmz nspr js otp couch
 do
+    echo "Now building $i"
     ./build.$i >& build.log.$i
+    
+    if [[ $? -ne 0 ]]; then
+        echo "Encountered error while building $i, please inspect build.log.$i"
+        exit 1
+    fi
 done

@@ -3,6 +3,14 @@
 
 source scripts/env
 
+if [[ ! -d /data ]]; then
+    WHOAMI=$(whoami)
+    echo "The /data directory required by this build script does not exist!"
+    echo "Please run the following command as root and re-run this script."
+    echo "# mkdir /data; chown $WHOAMI:$WHOAMI /data"
+    exit 1
+fi
+
 cd $COUCH_ANDROID_HOME/build/deps/
 rm -rf couchdb
 rm -rf /sdcard/*
@@ -21,7 +29,7 @@ ERLC=$COUCH_ANDROID_HOME/build/deps/otp/bootstrap/bin/erlc \
 CC=agcc \
 ./configure \
 --host=arm-eabi \
---prefix=/data/data/%app_name%/cache/couchdb \
+--prefix=/data/data/%app_name%/couchdb \
 --with-android=$ANDROID_SDK \
 --with-android-curl=$COUCH_ANDROID_HOME/build/deps/curl-7.20.0 \
 --with-erlang=$COUCH_ANDROID_HOME/build/deps/otp_rel/usr/include \

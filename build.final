@@ -25,7 +25,7 @@ cp -Rdp build/deps/otp_rel build/deps/otp_rel.package
 
 cd build/deps/otp_rel.package
 
-./Install -cross -sasl /data/data/%app_name%/cache/erlang
+./Install -cross -sasl /data/data/%app_name%/erlang
 rm Install
 
 # Remove unnecessary files
@@ -63,7 +63,7 @@ cd $COUCH_ANDROID_HOME
 # Finally move things into place
 #
 
-cp -Rdp /data/data/%app_name%/cache/couchdb $REL_PATH/couchdb
+cp -Rdp /data/data/%app_name%/couchdb $REL_PATH/couchdb
 mv build/deps/otp_rel.package $REL_PATH/erlang
 
 # We need the shared lib because our toolchain does not support the static lib (libstdc++ stuff)
@@ -104,20 +104,22 @@ rm -rf var
 rm -rf etc/init.d
 rm -rf etc/logrotate.d
 rm -rf lib/couchdb/erlang/lib/etap/
+
+# Location to ICU will be determined dynamically when Couch is initialized by the Couch-dependant app.
+# See libcouch-android and android_icu/ for more information.
 rm lib/couchdb/couch_icu_driver.so
 
 cd ..
 
-erl -eval "erlang:display(beam_lib:strip_release(\"couchdb/lib/couchdb/erlang\"))" -s init stop
-erl -eval "erlang:display(beam_lib:strip_release(\"erlang\"))" -s init stop
+# Strip beam files of debugging symbols
+$COUCH_ANDROID_HOME/build/deps/otp/bootstrap/bin/erl -eval "erlang:display(beam_lib:strip_release(\"couchdb/lib/couchdb/erlang\"))" -s init stop
+$COUCH_ANDROID_HOME/build/deps/otp/bootstrap/bin/erl -eval "erlang:display(beam_lib:strip_release(\"erlang\"))" -s init stop
 
 cd $COUCH_ANDROID_HOME
 
 ##
 # Archive the release
 #
-#cp files_to_copy.index $REL_PATH
-
 cd $REL_PATH
 touch filecount.$(find | wc -l)
 tar -czf ../release-$1.tgz filecount.* !(filecount.*)
