@@ -3,24 +3,17 @@ Building Android CouchDB
 
 These instruction are for building the couchdb android binaries from source, this involved building android, erlang, spidermonkey, couchdb and various libraries from source.
 
-Android requires around 10GB of free space to complete its build.
+Android requires around 20GB of free space to complete its build.
 
-It is currently aimed to work on Ubuntu 10.4 and Debian Squeeze x86 32bit, other platforms should be possible.
+It is currently aimed to work on Ubuntu 10.10 and Debian Squeeze x86 32bit, other platforms should be possible.
 
 Dependencies
 ============
 Compiling android requires the JDK and various system dependancies, you can find these listed @ http://source.android.com/source/initializing.html
 
-## Ubuntu 10.10 32bit
-    # Install Java 1.5
-    sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu dapper-updates main multiverse"
-    sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu dapper-updates main multiverse"
-    sudo apt-get update
-    sudo apt-get install sun-java5-jdk
-    sudo update-java-alternatives -s java-1.5.0-sun
+There are step by step instructions for building a the dependancies for Ubuntu 10.10 32bit @ https://github.com/couchbaselabs/build-android-couch/blob/master/build.otp
 
-    # Install dependancies
-    sudo apt-get install libncurses5-dev git-core gnupg flex bison gperf build-essential zip curl zlib1g-dev libc6-dev autoconf2.13 autoconf2.59 libtool
+You will also need to create a staging directory for the installation process:
 
     # Mimic the data layout on the device
     sudo mkdir /data
@@ -34,10 +27,10 @@ Usage
     $ ./build.resetmz
     $ ./build.nspr
     $ ./build.js
-    $ ./build.otp
+    $ ./build.erlang
     $ ./build.couch
     $ ./build.geocouch
-    $ ./build.final
+    $ ./build.final 0.1
 
 Credits
 =======
