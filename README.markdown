@@ -11,7 +11,7 @@ Dependencies
 ============
 Compiling android requires the JDK and various system dependancies, you can find these listed @ http://source.android.com/source/initializing.html
 
-There are step by step instructions for building a the dependancies for Ubuntu 10.10 32bit @ https://github.com/couchbaselabs/build-android-couch/blob/master/build.otp
+There are step by step instructions for building a the dependancies for Ubuntu 10.10 32bit @ https://github.com/couchbaselabs/build-android-couch/wiki/Building-on-Ubuntu-10.10
 
 You will also need to create a staging directory for the installation process:
 
