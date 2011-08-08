@@ -13,9 +13,11 @@ fi
 
 cd $COUCH_ANDROID_HOME/build/deps/
 rm -rf couchdb
-rm -rf /sdcard/*
-git clone -b android git://github.com/couchbaselabs/couchdb.git -b android
+rm -rf /data/*
+git clone https://github.com/couchbaselabs/couchdb.git -b android
 cd couchdb
+# Need to build against a specific commit due to path replacment
+git checkout af6e942e33dbdc7f5433ec0810d90102ca346e14
 
 # Android Build Support from https://github.com/apage43/couchdb/tree/0.11.x-android
 # Mozilla JS compatibility by chrisccoulson from jsapi@irc.mozilla.org
@@ -23,18 +25,21 @@ cd couchdb
 ./bootstrap
 
 ANDROID_SDK=$COUCH_ANDROID_HOME/build/deps/android/$ANDROID_TARGET
+ANDROID_NDK=$COUCH_ANDROID_HOME/build/deps/ndk/android-ndk-r4c
 
+ERL_LIBS=$COUCH_ANDROID_HOME/build/deps/otp/lib \
 ERL=$COUCH_ANDROID_HOME/build/deps/otp/bootstrap/bin/erl \
 ERLC=$COUCH_ANDROID_HOME/build/deps/otp/bootstrap/bin/erlc \
+CXX=agcc \
 CC=agcc \
 ./configure \
 --host=arm-eabi \
 --prefix=/data/data/%app_name%/couchdb \
 --with-android=$ANDROID_SDK \
---with-android-curl=$COUCH_ANDROID_HOME/build/deps/curl-7.20.0 \
 --with-erlang=$COUCH_ANDROID_HOME/build/deps/otp_rel/usr/include \
 --with-js-include=$COUCH_ANDROID_HOME/build/deps/mozilla-current/mozilla-central/js/src/dist/include \
 --with-js-lib="$COUCH_ANDROID_HOME/build/deps/mozilla-current/mozilla-central/js/src"
 
+export ERL_LIBS=$COUCH_ANDROID_HOME/build/deps/otp/lib
 make -s
 make install

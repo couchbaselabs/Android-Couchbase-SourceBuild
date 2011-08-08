@@ -1,55 +1,18 @@
 diff -ru release.bak/couchdb/bin/couchdb release/couchdb/bin/couchdb
 --- release.bak/couchdb/bin/couchdb	2011-02-05 01:26:00.000000000 -0700
 +++ release/couchdb/bin/couchdb	2011-02-08 16:42:00.000000000 -0700
-@@ -225,8 +225,8 @@
+@@ -228,8 +228,8 @@
          touch $PID_FILE
          interactive_option="+Bd -noinput"
      fi
--    command="/home/dale/lib/build-android-couch/build/deps/otp/bootstrap/bin/erl $interactive_option $ERL_START_OPTIONS \
+-    command="/home/dale/build-android-couch/build/deps/otp/bootstrap/bin/erl $interactive_option $ERL_START_OPTIONS \
 -        -env ERL_LIBS /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib -couch_ini $start_arguments -s couch"
 +    command="erl $interactive_option $ERL_START_OPTIONS \
 +        -env ERL_LIBS /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib -couch_ini $start_arguments -s couch"
      if test "$BACKGROUND" = "true" -a "$RECURSED" = "false"; then
          $0 $background_start_arguments -b -r $RESPAWN_TIMEOUT -p $PID_FILE \
              -o $STDOUT_FILE -e $STDERR_FILE -R &
---- release.bak/couchdb/etc/couchdb/local.ini	2011-02-05 01:26:00.000000000 -0700
-+++ release/couchdb/etc/couchdb/local.ini	2011-02-08 15:58:30.000000000 -0700
-@@ -5,23 +5,30 @@
- ; overwritten on server upgrade.
-
- [couchdb]
-+database_dir = /sdcard/Android/data/%app_name%/db
-+view_index_dir = /sdcard/Android/data/%app_name%/db
-+util_driver_dir = /data/data/%app_name%/couchdb/lib/couchdb/android_icu/%sdk_int%
- ;max_document_size = 4294967296 ; bytes
-+uri_file = /sdcard/Android/data/%app_name%/db/couch.uri
-
- [httpd]
--;port = 5984
--;bind_address = 127.0.0.1
-+port = 0
-+bind_addr              ess = 0.0.0.0
- ; Uncomment next line to trigger basic-auth popup on unauthorized requests.
- ;WWW-Authenticate = Basic realm="administrator"
-
-+[log]
-+file = /sdcard/Android/data/%app_name%/db/couch.log
-+level = debug
-+
- [couch_httpd_auth]
- ; If you set this to true, you should also uncomment the WWW-Authenticate line
- ; above. If you don't configure a WWW-Authenticate header, CouchDB will send
- ; Basic realm="server" in order to prevent you getting logged out.
- ; require_valid_user = false
-
--[log]
--;level = debug
--
-+[query_servers]
-+javascript = /data/data/%app_name%/couchdb/bin/couchjs_wrapper /data/data/%app_name%/couchdb/share/couchdb/server/main.js
-
- ; To enable Virtual Hosts in CouchDB, add a vhost = path directive. All requests to
- ; the Virual Host will be redirected to the path. In the example below all requests
+r /data/data/%app_name%/couchdb/share/couchdb/server/main.js
 diff -ruN release.bak/couchdb/bin/couchjs release/couchdb/bin/couchjs
 --- release.bak/couchdb/bin/couchjs	2011-02-05 01:26:00.000000000 -0700
 +++ release/couchdb/bin/couchjs	2011-02-05 01:37:12.000000000 -0700
@@ -59,7 +22,7 @@ diff -ruN release.bak/couchdb/bin/couchjs release/couchdb/bin/couchjs
 
  # Licensed under the Apache License, Version 2.0 (the "License"); you may not
  # use this file except in compliance with the License. You may obtain a copy of
-@@ -63,7 +63,7 @@
+@@ -65,7 +65,7 @@
  }
 
  run_couchjs () {
@@ -76,9 +39,9 @@ diff -ruN release.bak/couchdb/bin/couchjs_wrapper release/bin/couchjs_wrapper
 +export LD_LIBRARY_PATH=/data/data/%app_name%/couchdb/bin
 +exec /data/data/%app_name%/couchdb/lib/couchdb/bin/couchjs $@
 \ No newline at end of file
-diff -ruN release.bak/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable release/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable
---- release.bak/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable	2011-02-05 01:26:00.000000000 -0700
-+++ release/couchdb/lib/couchdb/erlang/lib/couch-1.0.2/priv/couchspawnkillable	2011-02-05 01:48:49.000000000 -0700
+diff -ruN release.bak/couchdb/lib/couchdb/erlang/lib/couch-1.2.02a-af6e942-git/priv/couchspawnkillable release/couchdb/lib/couchdb/erlang/lib/couch-1.2.0a-af6e942-git/priv/couchspawnkillable
+--- release.bak/couchdb/lib/couchdb/erlang/lib/couch-1.2.0a-af6e942-git/priv/couchspawnkillable	2011-02-05 01:26:00.000000000 -0700
++++ release/couchdb/lib/couchdb/erlang/lib/couch-1.2.0a-af6e942-git/priv/couchspawnkillable	2011-02-05 01:48:49.000000000 -0700
 @@ -1,4 +1,4 @@
 -#! /bin/sh -e
 +#!/system/bin/sh -e
@@ -94,7 +57,7 @@ diff -ruN release.bak/erlang/bin/erl release/erlang/bin/erl
  #
  # %CopyrightBegin%
  #
-@@ -22,6 +22,7 @@
+@@ -21,6 +21,7 @@
  BINDIR=$ROOTDIR/erts-5.7.5/bin
  EMU=beam
  PROGNAME=`echo $0 | sed 's/.*\///'`

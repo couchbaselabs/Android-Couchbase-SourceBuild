@@ -82,27 +82,27 @@ cp -r android_icu release/couchdb/lib/couchdb
 patch -lp0 < patches/release.patch
 rm release
 
+ANDROID_DEFAULT='[couchdb]
+database_dir = /sdcard/Android/data/%app_name%/db
+view_index_dir = /sdcard/Android/data/%app_name%/db
+util_driver_dir = /data/data/%app_name%/couchdb/lib/couchdb/android_icu/%sdk_int%
+uri_file = /sdcard/Android/data/%app_name%/db/couch.uri
+file_compression = none
+
+[httpd]
+port = 5984
+bind_address = 0.0.0.0
+
+[log]
+file = /sdcard/Android/data/%app_name%/db/couch.log
+level = debug
+
+[query_servers]
+javascript = /data/data/%app_name%/couchdb/bin/couchjs_wrapper /data/data/%app_name%/couchdb/share/couchdb/server/main.js'
+
+echo "$ANDROID_DEFAULT" >> $REL_PATH/couchdb/etc/couchdb/default.d/android.default.ini
+
 chmod +x $REL_PATH/couchdb/bin/couchjs_wrapper
-
-# Install geocouch
-mkdir $REL_PATH/erlang/lib/geocouch
-cp $COUCH_ANDROID_HOME/build/deps/geocouch/build/*.beam $REL_PATH/erlang/lib/geocouch
-
-GEOCOUCH='[daemons]
-spatial_manager={couch_spatial, start_link, []}
-
-[httpd_db_handlers]
-_spatial_cleanup = {couch_httpd_spatial, handle_spatial_cleanup_req}
-
-[httpd_design_handlers]
-_spatial = {couch_httpd_spatial, handle_spatial_req}
-_spatial/_list = {couch_httpd_spatial_list, handle_spatial_list_req}
-_spatial/_info = {couch_httpd_spatial, handle_design_info_req}
-_spatial/_compact = {couch_httpd_spatial, handle_compact_req}
-;deprecated API
-_spatiallist = {couch_httpd_spatial_list, handle_spatial_list_req_deprecated}'
-
-echo "$GEOCOUCH" >> $REL_PATH/couchdb/etc/couchdb/local.ini
 
 # Build ICU for whatever version of Android was compiled in ~/software/android/sdk/sources
 agcc \
@@ -119,7 +119,8 @@ agcc \
 # (Futon is in www)
 #
 cd $REL_PATH/couchdb
-rm -rf share/couchdb/www share/doc
+rm -rf share/couchdb/www
+rm -rf share/doc
 rm -rf share/man
 rm -rf var
 rm -rf etc/init.d
