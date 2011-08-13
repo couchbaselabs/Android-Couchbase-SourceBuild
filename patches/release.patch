@@ -39,9 +39,9 @@ diff -ruN release.bak/couchdb/bin/couchjs_wrapper release/bin/couchjs_wrapper
 +export LD_LIBRARY_PATH=/data/data/%app_name%/couchdb/bin
 +exec /data/data/%app_name%/couchdb/lib/couchdb/bin/couchjs $@
 \ No newline at end of file
-diff -ruN release.bak/couchdb/lib/couchdb/erlang/lib/couch-1.2.02a-af6e942-git/priv/couchspawnkillable release/couchdb/lib/couchdb/erlang/lib/couch-1.2.0a-af6e942-git/priv/couchspawnkillable
---- release.bak/couchdb/lib/couchdb/erlang/lib/couch-1.2.0a-af6e942-git/priv/couchspawnkillable	2011-02-05 01:26:00.000000000 -0700
-+++ release/couchdb/lib/couchdb/erlang/lib/couch-1.2.0a-af6e942-git/priv/couchspawnkillable	2011-02-05 01:48:49.000000000 -0700
+diff -ruN release.bak/couchdb/lib/couchdb/erlang/lib/couch/priv/couchspawnkillable release/couchdb/lib/couchdb/erlang/lib/couch/priv/couchspawnkillable
+--- release.bak/couchdb/lib/couchdb/erlang/lib/couch/priv/couchspawnkillable	2011-02-05 01:26:00.000000000 -0700
++++ release/couchdb/lib/couchdb/erlang/lib/couch/priv/couchspawnkillable	2011-02-05 01:48:49.000000000 -0700
 @@ -1,4 +1,4 @@
 -#! /bin/sh -e
 +#!/system/bin/sh -e

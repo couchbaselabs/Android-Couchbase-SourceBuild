@@ -66,6 +66,7 @@ cd $COUCH_ANDROID_HOME
 cp -Rdp /data/data/%app_name%/couchdb $REL_PATH/couchdb
 mv build/deps/otp_rel.package $REL_PATH/erlang
 
+mv $REL_PATH/couchdb/lib/couchdb/erlang/lib/couch-* $REL_PATH/couchdb/lib/couchdb/erlang/lib/couch
 
 # We need the shared lib because our toolchain does not support the static lib (libstdc++ stuff)
 cp build/deps/mozilla-current/mozilla-central/js/src/libmozjs.so $REL_PATH/couchdb/bin
