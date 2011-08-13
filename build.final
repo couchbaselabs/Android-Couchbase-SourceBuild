@@ -17,6 +17,8 @@ REL_PATH="out/$REL_NAME"
 
 mkdir -p $REL_PATH
 
+BUILD_VERSION=$(git describe --tags --always)
+
 ##
 # Configure and package Erlang/OTP
 #
@@ -144,6 +146,8 @@ cd $COUCH_ANDROID_HOME
 # Archive the release
 #
 cd $REL_PATH
+RELEASE_FILE=couchbase-$1-$BUILD_VERSION.tgz
 touch filecount.$(find | wc -l)
-tar -czf ../release-$1.tgz filecount.* !(filecount.*)
+tar -czf ../$RELEASE_FILE filecount.* !(filecount.*)
+cp ../$RELEASE_FILE ../$RELEASE_FILE.jpg
 cd ..
