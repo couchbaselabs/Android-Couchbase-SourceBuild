@@ -93,7 +93,7 @@ uri_file = /sdcard/Android/data/%app_name%/db/couch.uri
 file_compression = none
 
 [httpd]
-port = 5984
+port = 0
 bind_address = 0.0.0.0
 
 [log]
