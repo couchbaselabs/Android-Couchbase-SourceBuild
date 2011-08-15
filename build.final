@@ -70,6 +70,8 @@ mv build/deps/otp_rel.package $REL_PATH/erlang
 
 mv $REL_PATH/couchdb/lib/couchdb/erlang/lib/couch-* $REL_PATH/couchdb/lib/couchdb/erlang/lib/couch
 
+
+
 # We need the shared lib because our toolchain does not support the static lib (libstdc++ stuff)
 cp build/deps/mozilla-current/mozilla-central/js/src/libmozjs.so $REL_PATH/couchdb/bin
 
@@ -103,9 +105,24 @@ level = debug
 [query_servers]
 javascript = /data/data/%app_name%/couchdb/bin/couchjs_wrapper /data/data/%app_name%/couchdb/share/couchdb/server/main.js'
 
-echo "$ANDROID_DEFAULT" >> $REL_PATH/couchdb/etc/couchdb/default.d/android.default.ini
+echo "$ANDROID_DEFAULT" >> $REL_PATH/couchdb/etc/couchdb/android.default.ini
+touch $REL_PATH/couchdb/etc/couchdb/overrides.ini
+
+COUCHDB_WRAPPER='#!/system/bin/sh
+export HOME=/data/data/%app_name%
+export LD_LIBRARY_PATH=/data/data/%app_name%/couchdb/bin:$HOME/erlang/erts-5.7.5/bin:$HOME/couchdb/lib/couchdb/bin
+exec /data/data/%app_name%/erlang/bin/erl $@'
+
+echo "$COUCHDB_WRAPPER" >> $REL_PATH/couchdb/bin/couchdb_wrapper
+
+COUCHJS_WRAPPER='+#!/system/bin/sh
++export LD_LIBRARY_PATH=/data/data/%app_name%/couchdb/bin
++exec /data/data/%app_name%/couchdb/lib/couchdb/bin/couchjs $@'
+
+echo "$COUCHJS_WRAPPER" >> $REL_PATH/couchdb/bin/couchjs_wrapper
 
 chmod +x $REL_PATH/couchdb/bin/couchjs_wrapper
+chmod +x $REL_PATH/couchdb/bin/couchdb_wrapper
 
 # Build ICU for whatever version of Android was compiled in ~/software/android/sdk/sources
 agcc \

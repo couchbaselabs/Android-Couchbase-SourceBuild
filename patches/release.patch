@@ -1,18 +1,3 @@
-diff -ru release.bak/couchdb/bin/couchdb release/couchdb/bin/couchdb
---- release.bak/couchdb/bin/couchdb	2011-02-05 01:26:00.000000000 -0700
-+++ release/couchdb/bin/couchdb	2011-02-08 16:42:00.000000000 -0700
-@@ -228,8 +228,8 @@
-         touch $PID_FILE
-         interactive_option="+Bd -noinput"
-     fi
--    command="/home/dale/build-android-couch/build/deps/otp/bootstrap/bin/erl $interactive_option $ERL_START_OPTIONS \
--        -env ERL_LIBS /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib -couch_ini $start_arguments -s couch"
-+    command="erl $interactive_option $ERL_START_OPTIONS \
-+        -env ERL_LIBS /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib -couch_ini $start_arguments -s couch"
-     if test "$BACKGROUND" = "true" -a "$RECURSED" = "false"; then
-         $0 $background_start_arguments -b -r $RESPAWN_TIMEOUT -p $PID_FILE \
-             -o $STDOUT_FILE -e $STDERR_FILE -R &
-r /data/data/%app_name%/couchdb/share/couchdb/server/main.js
 diff -ruN release.bak/couchdb/bin/couchjs release/couchdb/bin/couchjs
 --- release.bak/couchdb/bin/couchjs	2011-02-05 01:26:00.000000000 -0700
 +++ release/couchdb/bin/couchjs	2011-02-05 01:37:12.000000000 -0700
@@ -31,14 +16,6 @@ diff -ruN release.bak/couchdb/bin/couchjs release/couchdb/bin/couchjs
  }
 
  parse_script_option_list () {
-diff -ruN release.bak/couchdb/bin/couchjs_wrapper release/bin/couchjs_wrapper
---- release.bak/couchdb/bin/couchjs_wrapper	1969-12-31 17:00:00.000000000 -0700
-+++ release/couchdb/bin/couchjs_wrapper	2011-02-05 01:39:28.000000000 -0700
-@@ -0,0 +1,3 @@
-+#!/system/bin/sh
-+export LD_LIBRARY_PATH=/data/data/%app_name%/couchdb/bin
-+exec /data/data/%app_name%/couchdb/lib/couchdb/bin/couchjs $@
-\ No newline at end of file
 diff -ruN release.bak/couchdb/lib/couchdb/erlang/lib/couch/priv/couchspawnkillable release/couchdb/lib/couchdb/erlang/lib/couch/priv/couchspawnkillable
 --- release.bak/couchdb/lib/couchdb/erlang/lib/couch/priv/couchspawnkillable	2011-02-05 01:26:00.000000000 -0700
 +++ release/couchdb/lib/couchdb/erlang/lib/couch/priv/couchspawnkillable	2011-02-05 01:48:49.000000000 -0700
