@@ -1,13 +1,14 @@
 # Important paths for Android binaries
 
 export COUCH_ANDROID_HOME=$(pwd)
+export ANDROID_SDK_ROOT=$HOME/lib/android
 export ANDROID_APP_NAME="com.test.couch"
 export ANDROID_TARGET=froyo
 
 paths="
 $(pwd)/scripts
-$(pwd)/build/deps/android/other/apk
-$(pwd)/build/deps/android/$ANDROID_TARGET/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin/
+$ANDROID_SDK_ROOT/other/apk
+$ANDROID_SDK_ROOT/$ANDROID_TARGET/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin/
 "
 
 for i in $paths

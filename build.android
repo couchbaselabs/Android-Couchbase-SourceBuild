@@ -10,9 +10,8 @@ if [[ -z "$JAVA_HOME" ]]; then
     exit 1
 fi
 
-cd $COUCH_ANDROID_HOME
-mkdir -p build/deps/android/$ANDROID_TARGET
-cd build/deps/android/$ANDROID_TARGET
+mkdir -p $ANDROID_SDK_ROOT
+cd $ANDROID_SDK_ROOT
 
 repo init -u git://android.git.kernel.org/platform/manifest.git -b $ANDROID_TARGET
 repo sync
