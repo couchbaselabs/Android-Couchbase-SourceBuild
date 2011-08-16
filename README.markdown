@@ -1,8 +1,6 @@
 Building Android CouchDB
 ========================
 
-test commit
-
 These instruction are for building the couchdb android binaries from source, this involved building android, erlang, spidermonkey, couchdb and various libraries from source.
 
 Android requires around 20GB of free space to complete its build.
