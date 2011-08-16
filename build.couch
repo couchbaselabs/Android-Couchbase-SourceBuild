@@ -16,8 +16,6 @@ rm -rf couchdb
 rm -rf /data/*
 git clone https://github.com/couchbaselabs/couchdb.git -b android
 cd couchdb
-# Need to build against a specific commit due to path replacment
-git checkout af6e942e33dbdc7f5433ec0810d90102ca346e14
 
 # Android Build Support from https://github.com/apage43/couchdb/tree/0.11.x-android
 # Mozilla JS compatibility by chrisccoulson from jsapi@irc.mozilla.org
