@@ -24,7 +24,7 @@ git checkout af6e942e33dbdc7f5433ec0810d90102ca346e14
 # Fixes for Android by matt.adams@radicaldynamic.com
 ./bootstrap
 
-ANDROID_SDK=$COUCH_ANDROID_HOME/build/deps/android/$ANDROID_TARGET
+ANDROID_SDK=$ANDROID_SDK_ROOT
 ANDROID_NDK=$COUCH_ANDROID_HOME/build/deps/ndk/android-ndk-r4c
 
 ERL_LIBS=$COUCH_ANDROID_HOME/build/deps/otp/lib \
