@@ -33,25 +33,25 @@ rm Install
 # Remove unnecessary files
 shopt -s extglob
 
-rm -rf erts-5.7.5/doc erts-5.7.5/include erts-5.7.5/man erts-5.7.5/src misc releases usr
+rm -rf erts-5.8.5/doc erts-5.8.5/include erts-5.8.5/man erts-5.8.5/src misc releases usr
 
 rm bin/dialyzer bin/erlc bin/escript bin/run_erl bin/to_erl bin/typer
-rm erts-5.7.5/bin/dialyzer erts-5.7.5/bin/erlc erts-5.7.5/bin/escript erts-5.7.5/bin/run_erl erts-5.7.5/bin/to_erl erts-5.7.5/bin/typer
+rm erts-5.8.5/bin/dialyzer erts-5.8.5/bin/erlc erts-5.8.5/bin/escript erts-5.8.5/bin/run_erl erts-5.8.5/bin/to_erl erts-5.8.5/bin/typer
 
 cd lib
 
-rm -rf !(crypto-1.6.4|erts-5.7.5|inets-5.3|kernel-2.13.5|public_key-0.5|sasl-2.1.9|ssl-3.10.8|stdlib-1.16.5|xmerl-1.2.4)
+rm -rf !(os_mon-2.2.6|crypto-2.0.3|erts-5.8.5|inets-5.7|kernel-2.14.5|public_key-0.12|sasl-2.1.9.4|ssl-4.1.6|stdlib-1.17.5|xmerl-1.2.9)
 
-cd xmerl-1.2.4/ebin/
+cd xmerl-1.2.9/ebin/
 rm !(xmerl_ucs.beam)
 cd ../..
 
-cd inets-5.3/ebin/
+cd inets-5.7/ebin/
 rm !(httpd_util.beam|httpd_util|inets.app)
 cd ../..
-rm -rf inets-5.3/priv
-rm public_key-0.5/asn1/OTP-PUB-KEY.erl
-rm ssl-3.10.8/pkix/OTP-PKIX.erl
+rm -rf inets-5.7/priv
+#rm public_key-0.12/asn1/OTP-PUB-KEY.erl
+#rm ssl-4.1.6/pkix/OTP-PKIX.erl
 
 # Remove vestigal files
 find . -depth -name src -type d -exec rm -rf {} \;
@@ -110,14 +110,14 @@ touch $REL_PATH/couchdb/etc/couchdb/overrides.ini
 
 COUCHDB_WRAPPER='#!/system/bin/sh
 export HOME=/data/data/%app_name%
-export LD_LIBRARY_PATH=/data/data/%app_name%/couchdb/bin:$HOME/erlang/erts-5.7.5/bin:$HOME/couchdb/lib/couchdb/bin
+export LD_LIBRARY_PATH=/data/data/%app_name%/couchdb/bin:$HOME/erlang/erts-5.8.5/bin:$HOME/couchdb/lib/couchdb/bin
 exec /data/data/%app_name%/erlang/bin/erl $@'
 
 echo "$COUCHDB_WRAPPER" >> $REL_PATH/couchdb/bin/couchdb_wrapper
 
-COUCHJS_WRAPPER='+#!/system/bin/sh
-+export LD_LIBRARY_PATH=/data/data/%app_name%/couchdb/bin
-+exec /data/data/%app_name%/couchdb/lib/couchdb/bin/couchjs $@'
+COUCHJS_WRAPPER='#!/system/bin/sh
+export LD_LIBRARY_PATH=/data/data/%app_name%/couchdb/bin
+exec /data/data/%app_name%/couchdb/lib/couchdb/bin/couchjs $@'
 
 echo "$COUCHJS_WRAPPER" >> $REL_PATH/couchdb/bin/couchjs_wrapper
 

@@ -11,7 +11,7 @@ diff -ruN release.bak/couchdb/bin/couchjs release/couchdb/bin/couchjs
  }
 
  run_couchjs () {
--    exec /data/data/%app_name%/couchdb/lib/couchdb/bin/couchjs $@
+-    exec "/data/data/%app_name%/couchdb/lib/couchdb/bin/couchjs" "$@"
 +    exec LD_LIBRARY_PATH=/data/data/%app_name%/couchdb/lib/couchdb/bin /data/data/%app_name%/couchdb/lib/couchdb/bin/couchjs $@
  }
 
@@ -35,7 +35,7 @@ diff -ruN release.bak/erlang/bin/erl release/erlang/bin/erl
  # %CopyrightBegin%
  #
 @@ -21,6 +21,7 @@
- BINDIR=$ROOTDIR/erts-5.7.5/bin
+ BINDIR=$ROOTDIR/erts-5.8.5/bin
  EMU=beam
  PROGNAME=`echo $0 | sed 's/.*\///'`
 +export ERL_INETRC=$ROOTDIR/bin/erl_inetrc
@@ -69,45 +69,45 @@ diff -ru release.bak/erlang/bin/start_erl release/erlang/bin/start_erl
  #
  #
  # %CopyrightBegin%
-diff -ru release.bak/erlang/erts-5.7.5/bin/erl release/erlang/erts-5.7.5/bin/erl
---- release.bak/erlang/erts-5.7.5/bin/erl	2011-02-05 01:57:26.000000000 -0700
-+++ release/erlang/erts-5.7.5/bin/erl	2011-02-05 02:06:04.000000000 -0700
+diff -ru release.bak/erlang/erts-5.8.5/bin/erl release/erlang/erts-5.8.5/bin/erl
+--- release.bak/erlang/erts-5.8.5/bin/erl	2011-02-05 01:57:26.000000000 -0700
++++ release/erlang/erts-5.8.5/bin/erl	2011-02-05 02:06:04.000000000 -0700
 @@ -1,4 +1,4 @@
 -#!/bin/sh
 +#!/system/bin/sh
  #
  # %CopyrightBegin%
  #
-diff -ru release.bak/erlang/erts-5.7.5/bin/erl.src release/erlang/erts-5.7.5/bin/erl.src
---- release.bak/erlang/erts-5.7.5/bin/erl.src	2011-02-05 01:23:30.000000000 -0700
-+++ release/erlang/erts-5.7.5/bin/erl.src	2011-02-05 02:06:01.000000000 -0700
+diff -ru release.bak/erlang/erts-5.8.5/bin/erl.src release/erlang/erts-5.8.5/bin/erl.src
+--- release.bak/erlang/erts-5.8.5/bin/erl.src	2011-02-05 01:23:30.000000000 -0700
++++ release/erlang/erts-5.8.5/bin/erl.src	2011-02-05 02:06:01.000000000 -0700
 @@ -1,4 +1,4 @@
 -#!/bin/sh
 +#!/system/bin/sh
  #
  # %CopyrightBegin%
  #
-diff -ru release.bak/erlang/erts-5.7.5/bin/start release/erlang/erts-5.7.5/bin/start
---- release.bak/erlang/erts-5.7.5/bin/start	2011-02-05 01:57:26.000000000 -0700
-+++ release/erlang/erts-5.7.5/bin/start	2011-02-05 02:06:09.000000000 -0700
+diff -ru release.bak/erlang/erts-5.8.5/bin/start release/erlang/erts-5.8.5/bin/start
+--- release.bak/erlang/erts-5.8.5/bin/start	2011-02-05 01:57:26.000000000 -0700
++++ release/erlang/erts-5.8.5/bin/start	2011-02-05 02:06:09.000000000 -0700
 @@ -1,4 +1,4 @@
 -#!/bin/sh
 +#!/system/bin/sh
  #
  # %CopyrightBegin%
  #
-diff -ru release.bak/erlang/erts-5.7.5/bin/start_erl.src release/erlang/erts-5.7.5/bin/start_erl.src
---- release.bak/erlang/erts-5.7.5/bin/start_erl.src	2011-02-05 01:23:30.000000000 -0700
-+++ release/erlang/erts-5.7.5/bin/start_erl.src	2011-02-05 02:06:06.000000000 -0700
+diff -ru release.bak/erlang/erts-5.8.5/bin/start_erl.src release/erlang/erts-5.8.5/bin/start_erl.src
+--- release.bak/erlang/erts-5.8.5/bin/start_erl.src	2011-02-05 01:23:30.000000000 -0700
++++ release/erlang/erts-5.8.5/bin/start_erl.src	2011-02-05 02:06:06.000000000 -0700
 @@ -1,4 +1,4 @@
 -#!/bin/sh
 +#!/system/bin/sh
  #
  #
  # %CopyrightBegin%
-diff -ru release.bak/erlang/erts-5.7.5/bin/start.src release/erlang/erts-5.7.5/bin/start.src
---- release.bak/erlang/erts-5.7.5/bin/start.src	2011-02-05 01:23:30.000000000 -0700
-+++ release/erlang/erts-5.7.5/bin/start.src	2011-02-05 02:05:58.000000000 -0700
+diff -ru release.bak/erlang/erts-5.8.5/bin/start.src release/erlang/erts-5.8.5/bin/start.src
+--- release.bak/erlang/erts-5.8.5/bin/start.src	2011-02-05 01:23:30.000000000 -0700
++++ release/erlang/erts-5.8.5/bin/start.src	2011-02-05 02:05:58.000000000 -0700
 @@ -1,3 +1,3 @@
 -#!/bin/sh
 +#!/system/bin/sh

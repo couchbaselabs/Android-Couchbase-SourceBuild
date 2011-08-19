@@ -7,11 +7,17 @@ cd $COUCH_ANDROID_HOME/build/deps
 
 rm -rf otp
 rm -rf otp_rel
-git clone git://github.com/couchbaselabs/otp.git -b android
+git clone git://github.com/couchbaselabs/otp.git -b android_r14b03
 cd otp
 
-export ANDROID_SYS_ROOT=$ANDROID_SDK_ROOT
+SKIP=("appmon" "asn1" "common_test" "cosEvent" "cosEventDomain" "cosFileTransfer" "cosNotification" "cosProperty" "cosTime" "cosTransactions" "wx" "debugger" "ssh" "test_server" "toolbar" "odbc" "orber" "reltool" "observer" "dialyzer" "docbuilder" "edoc" "et" "gs" "hipe" "runtime_tools" "percept" "pman" "tools" "inviso" "tv" "typer" "webtool" "jinterface" "megaco" "mnesia")
 
+for item in ${SKIP[*]}
+do
+    touch "lib/$item/SKIP"
+done
+
+export ANDROID_SYS_ROOT=$ANDROID_SDK_ROOT
 ./otp_build autoconf
 ./otp_build configure --xcomp-conf=xcomp/erl-xcomp-android.conf
 ./otp_build boot -a
