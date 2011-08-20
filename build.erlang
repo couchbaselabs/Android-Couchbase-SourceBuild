@@ -8,9 +8,10 @@ cd $COUCH_ANDROID_HOME/build/deps
 rm -rf otp
 rm -rf otp_rel
 git clone git://github.com/couchbaselabs/otp.git -b android_r14b03
+
 cd otp
 
-SKIP=("appmon" "asn1" "common_test" "cosEvent" "cosEventDomain" "cosFileTransfer" "cosNotification" "cosProperty" "cosTime" "cosTransactions" "wx" "debugger" "ssh" "test_server" "toolbar" "odbc" "orber" "reltool" "observer" "dialyzer" "docbuilder" "edoc" "et" "gs" "hipe" "runtime_tools" "percept" "pman" "tools" "inviso" "tv" "typer" "webtool" "jinterface" "megaco" "mnesia")
+SKIP=("appmon" "asn1" "common_test" "cosEvent" "cosEventDomain" "cosFileTransfer" "cosNotification" "cosProperty" "cosTime" "cosTransactions" "wx" "debugger" "ssh" "test_server" "toolbar" "odbc" "orber" "reltool" "observer" "dialyzer" "docbuilder" "edoc" "et" "gs" "hipe" "runtime_tools" "percept" "pman" "inviso" "tv" "typer" "webtool" "jinterface" "megaco" "mnesia")
 
 for item in ${SKIP[*]}
 do
