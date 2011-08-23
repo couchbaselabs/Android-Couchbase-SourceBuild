@@ -74,7 +74,7 @@ mv $REL_PATH/couchdb/lib/couchdb/erlang/lib/couch-* $REL_PATH/couchdb/lib/couchd
 cp build/deps/mozilla-current/mozilla-central/js/src/libmozjs.so $REL_PATH/couchdb/bin
 
 mkdir $REL_PATH/erlang/lib/geocouch
-cp $COUCH_ANDROID_HOME/build/deps/geocouch/build/*.beam $REL_PATH/erlang/lib/geocouch
+cp $GEOCOUCH_HOME/build/*.beam $REL_PATH/erlang/lib/geocouch
 
 ###
 # 2) Create couchjs_wrapper script (because we can't link to libmozjs.a and so need LD_LIBRARY_PATH set)
@@ -142,7 +142,7 @@ chmod +x $REL_PATH/couchdb/bin/couchdb_wrapper
 # Build ICU for whatever version of Android was compiled in ~/software/android/sdk/sources
 agcc \
 -shared \
--o $REL_PATH/couchdb/lib/couchdb/couch_icu_driver.so $COUCH_ANDROID_HOME/build/deps/couchdb/src/couchdb/priv/.libs/libcouch_icu_driver.a \
+-o $REL_PATH/couchdb/lib/couchdb/couch_icu_driver.so $COUCH_HOME/src/couchdb/priv/.libs/libcouch_icu_driver.a \
 -licuuc \
 -licudata \
 -licui18n \
@@ -169,8 +169,8 @@ rm lib/couchdb/couch_icu_driver.so
 cd ..
 
 # Strip beam files of debugging symbols
-$COUCH_ANDROID_HOME/build/deps/otp/bootstrap/bin/erl -eval "erlang:display(beam_lib:strip_release(\"couchdb/lib/couchdb/erlang\"))" -s init stop
-$COUCH_ANDROID_HOME/build/deps/otp/bootstrap/bin/erl -eval "erlang:display(beam_lib:strip_release(\"erlang\"))" -s init stop
+$ERL_HOME/bootstrap/bin/erl -eval "erlang:display(beam_lib:strip_release(\"couchdb/lib/couchdb/erlang\"))" -s init stop
+$ERL_HOME/bootstrap/bin/erl -eval "erlang:display(beam_lib:strip_release(\"erlang\"))" -s init stop
 
 cd $COUCH_ANDROID_HOME
 

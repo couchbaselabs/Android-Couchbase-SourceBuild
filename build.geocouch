@@ -3,11 +3,9 @@
 
 source scripts/env
 
-cd $COUCH_ANDROID_HOME/build/deps/
-git clone https://github.com/couchbase/geocouch.git
-cd geocouch
+cd $GEOCOUCH_HOME
 
-COUCH_SRC=$COUCH_ANDROID_HOME/build/deps/couchdb/src/couchdb \
-ERL_LIBS=$COUCH_ANDROID_HOME/build/deps/otp/lib \
-ERLC=$COUCH_ANDROID_HOME/build/deps/otp/bootstrap/bin/erlc \
-make ERL=$COUCH_ANDROID_HOME/build/deps/otp/bootstrap/bin/erl
+COUCH_SRC=$COUCH_HOME/src/couchdb \
+ERL_LIBS=$ERL_HOME/lib \
+ERLC=$ERL_HOME/bootstrap/bin/erlc \
+make ERL=$ERL_HOME/bootstrap/bin/erl

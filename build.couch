@@ -11,11 +11,7 @@ if [[ ! -d /data ]]; then
     exit 1
 fi
 
-cd $COUCH_ANDROID_HOME/build/deps/
-rm -rf couchdb
-rm -rf /data/*
-git clone https://github.com/couchbaselabs/couchdb.git -b preview_android
-cd couchdb
+cd $COUCH_HOME
 
 # Android Build Support from https://github.com/apage43/couchdb/tree/0.11.x-android
 # Mozilla JS compatibility by chrisccoulson from jsapi@irc.mozilla.org
@@ -25,9 +21,9 @@ cd couchdb
 ANDROID_SDK=$ANDROID_SDK_ROOT
 ANDROID_NDK=$COUCH_ANDROID_HOME/build/deps/ndk/android-ndk-r4c
 
-ERL_LIBS=$COUCH_ANDROID_HOME/build/deps/otp/lib \
-ERL=$COUCH_ANDROID_HOME/build/deps/otp/bootstrap/bin/erl \
-ERLC=$COUCH_ANDROID_HOME/build/deps/otp/bootstrap/bin/erlc \
+ERL_LIBS=$ERL_HOME/lib \
+ERL=$ERL_HOME/bootstrap/bin/erl \
+ERLC=$ERL_HOME/bootstrap/bin/erlc \
 CXX=agcc \
 CC=agcc \
 ./configure \
@@ -38,6 +34,6 @@ CC=agcc \
 --with-js-include=$COUCH_ANDROID_HOME/build/deps/mozilla-current/mozilla-central/js/src/dist/include \
 --with-js-lib="$COUCH_ANDROID_HOME/build/deps/mozilla-current/mozilla-central/js/src"
 
-export ERL_LIBS=$COUCH_ANDROID_HOME/build/deps/otp/lib
+export ERL_LIBS=$ERL_HOME/lib
 make -s
 make install
