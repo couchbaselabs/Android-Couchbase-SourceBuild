@@ -177,6 +177,8 @@ rm -rf share/man
 rm -rf var
 rm -rf etc/init.d
 rm -rf etc/logrotate.d
+rm -rf etc/couchdb/local.d
+rm -rf etc/couchdb/default.d
 rm -rf lib/couchdb/erlang/lib/etap/
 
 # Location to ICU will be determined dynamically when Couch is initialized by the Couch-dependant app.
