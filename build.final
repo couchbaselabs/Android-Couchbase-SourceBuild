@@ -180,7 +180,8 @@ rm -rf etc/logrotate.d
 rm -rf etc/couchdb/local.d
 rm -rf etc/couchdb/default.d
 rm -rf lib/couchdb/erlang/lib/etap/
-
+rm bin/couchjs
+rm bin/couchdb
 # Location to ICU will be determined dynamically when Couch is initialized by the Couch-dependant app.
 # See libcouch-android and android_icu/ for more information.
 rm lib/couchdb/couch_icu_driver.so
