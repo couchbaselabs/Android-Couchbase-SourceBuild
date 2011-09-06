@@ -123,10 +123,25 @@ _spatiallist = {couch_httpd_spatial_list, handle_spatial_list_req_deprecated}'
 echo "$ANDROID_DEFAULT" >> $REL_PATH/couchdb/etc/couchdb/android.default.ini
 touch $REL_PATH/couchdb/etc/couchdb/overrides.ini
 
-COUCHDB_WRAPPER='#!/system/bin/sh
+COUCHDB_WRAPPER='#!/system/bin/sh -e
+
 export HOME=/data/data/%app_name%
-export LD_LIBRARY_PATH=/data/data/%app_name%/couchdb/bin:$HOME/erlang/erts-5.8.5/bin:$HOME/couchdb/lib/couchdb/bin
-exec /data/data/%app_name%/erlang/bin/erl $@'
+
+COUCHDB_DIR=$HOME/couchdb
+COUCHDB_BINDIR=$COUCHDB_DIR/bin
+ERLANG_DIR=$HOME/erlang
+ERLANG_BINDIR=$ERLANG_DIR/bin
+ERLANG_LIBDIR=$ERLANG_DIR/erts-5.8.5/bin
+
+export LD_LIBRARY_PATH=$ERLANG_LIBDIR:$COUCHDB_BINDIR:$COUCHDB_DIR/lib/couchdb/bin
+export PATH=$ERLANG_BINDIR:$COUCHDB_BINDIR:$PATH
+export ERL_INETRC=$ERLANG_DIR/bin/erl_inetrc
+export EMU=beam
+export ROOTDIR=$ERLANG_DIR
+export BINDIR=$ERLANG_LIBDIR
+export PROGNAME="${0##*/}"
+
+exec $BINDIR/erlexec $@'
 
 echo "$COUCHDB_WRAPPER" >> $REL_PATH/couchdb/bin/couchdb_wrapper
 
