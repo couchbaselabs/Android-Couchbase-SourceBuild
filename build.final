@@ -35,8 +35,9 @@ shopt -s extglob
 
 rm -rf erts-5.8.5/doc erts-5.8.5/include erts-5.8.5/man erts-5.8.5/src misc releases usr
 
-rm bin/dialyzer bin/erlc bin/escript bin/run_erl bin/to_erl bin/typer
-rm erts-5.8.5/bin/dialyzer erts-5.8.5/bin/erlc erts-5.8.5/bin/escript erts-5.8.5/bin/run_erl erts-5.8.5/bin/to_erl erts-5.8.5/bin/typer
+rm bin/dialyzer bin/erlc bin/escript bin/run_erl bin/to_erl bin/typer bin/ct_run bin/epmd bin/erl bin/run_test bin/start
+
+rm erts-5.8.5/bin/dialyzer erts-5.8.5/bin/erlc erts-5.8.5/bin/escript erts-5.8.5/bin/run_erl erts-5.8.5/bin/to_erl erts-5.8.5/bin/typer erts-5.8.5/bin/erl erts-5.8.5/bin/erl.src erts-5.8.5/bin/ct_run erts-5.8.5/bin/start erts-5.8.5/bin/start.src erts-5.8.5/bin/start_erl.src
 
 cd lib
 
@@ -50,6 +51,7 @@ cd inets-5.7/ebin/
 rm !(httpd_util.beam|httpd_util|inets.app)
 cd ../..
 rm -rf inets-5.7/priv
+
 #rm public_key-0.12/asn1/OTP-PUB-KEY.erl
 #rm ssl-4.1.6/pkix/OTP-PKIX.erl
 
