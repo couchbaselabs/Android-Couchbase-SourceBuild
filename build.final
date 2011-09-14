@@ -105,6 +105,9 @@ bind_address = 0.0.0.0
 file = %couch_data_dir%/db/couch.log
 level = debug
 
+[access_log]
+file = %couch_data_dir%/db/couch_access.log
+
 [query_servers]
 javascript = %couch_installation_dir%/couchdb/bin/couchjs_wrapper %couch_installation_dir%/couchdb/share/couchdb/server/main.js
 coffeescript = %couch_installation_dir%/couchdb/bin/couchjs %couch_installation_dir%/couchdb/share/couchdb/server/main-coffee.js
