@@ -5,7 +5,7 @@ source scripts/env
 
 cd $ERL_HOME
 
-SKIP=("appmon" "asn1" "common_test" "cosEvent" "cosEventDomain" "cosFileTransfer" "cosNotification" "cosProperty" "cosTime" "cosTransactions" "wx" "debugger" "ssh" "test_server" "toolbar" "odbc" "orber" "reltool" "observer" "dialyzer" "docbuilder" "edoc" "et" "gs" "hipe" "runtime_tools" "percept" "pman" "inviso" "tv" "typer" "webtool" "jinterface" "megaco" "mnesia")
+SKIP=("appmon" "asn1" "common_test" "cosEvent" "cosEventDomain" "cosFileTransfer" "cosNotification" "cosProperty" "cosTime" "cosTransactions" "wx" "debugger" "ssh" "test_server" "toolbar" "odbc" "orber" "reltool" "observer" "dialyzer" "docbuilder" "edoc" "et" "gs" "hipe" "runtime_tools" "percept" "pman" "inviso" "tv" "typer" "webtool" "jinterface" "megaco" "mnesia" "erl_interface" "diameter" "pcre")
 
 for item in ${SKIP[*]}
 do

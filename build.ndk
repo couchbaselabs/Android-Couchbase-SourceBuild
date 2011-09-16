@@ -1,0 +1,16 @@
+#!/bin/bash -x
+#
+
+source scripts/env
+
+cd $COUCH_ANDROID_HOME/build/deps/android-ndk
+
+NDK=android-ndk-r6b-linux-x86
+
+[[ -f $NDK.tar.bz2 ]] || wget http://dl.google.com/android/ndk/$NDK.tar.bz2
+
+tar -jxf $NDK.tar.bz2
+
+TARSTATUS=$?
+
+exit $TARSTATUS

@@ -18,9 +18,6 @@ cd $COUCH_HOME
 # Fixes for Android by matt.adams@radicaldynamic.com
 ./bootstrap
 
-ANDROID_SDK=$ANDROID_SDK_ROOT
-ANDROID_NDK=$COUCH_ANDROID_HOME/build/deps/ndk/android-ndk-r4c
-
 ERL_LIBS=$ERL_HOME/lib \
 ERL=$ERL_HOME/bootstrap/bin/erl \
 ERLC=$ERL_HOME/bootstrap/bin/erlc \
@@ -29,7 +26,6 @@ CC=agcc \
 ./configure \
 --host=arm-eabi \
 --prefix=/data/data/%app_name%/couchdb \
---with-android=$ANDROID_SDK \
 --with-erlang=$COUCH_ANDROID_HOME/build/deps/otp_rel/usr/include \
 --with-js-include=$COUCH_ANDROID_HOME/build/deps/mozilla-current/mozilla-central/js/src/dist/include \
 --with-js-lib="$COUCH_ANDROID_HOME/build/deps/mozilla-current/mozilla-central/js/src"
