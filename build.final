@@ -14,6 +14,8 @@ fi
 DATE=$(date +"%Y-%m-%d_%H-%M-%S")
 REL_NAME="release-$DATE"
 REL_PATH="out/$REL_NAME"
+OVERLAY_NAME="overlay-$DATE"
+OVERLAY_PATH="out/$OVERLAY_NAME"
 
 mkdir -p $REL_PATH
 
@@ -67,33 +69,36 @@ cd $COUCH_ANDROID_HOME
 # Finally move things into place
 #
 
-cp -Rdp /data/data/%app_name%/couchdb $REL_PATH/couchdb
-mv build/deps/otp_rel.package $REL_PATH/erlang
+mkdir -p $REL_PATH/couchdb/bin/
+mkdir -p $REL_PATH/couchdb/etc/
+cp -Rdp /data/data/%app_name%/couchdb/etc/couchdb $REL_PATH/couchdb/etc/couchdb
+mkdir -p $REL_PATH/couchdb/etc/
+cp -Rdp /data/data/%app_name%/couchdb/etc/default $REL_PATH/couchdb/etc/default
+mkdir -p $REL_PATH/couchdb/lib/couchdb/bin/
+cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/bin/couchjs $REL_PATH/couchdb/lib/couchdb/bin/couchjs
+mkdir -p $REL_PATH/couchdb/share/couchdb/
+cp -Rdp /data/data/%app_name%/couchdb/share/couchdb/server $REL_PATH/couchdb/share/couchdb/server
 
-mv $REL_PATH/couchdb/lib/couchdb/erlang/lib/couch-* $REL_PATH/couchdb/lib/couchdb/erlang/lib/couch
+cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib/couch-1.2.0a-8899be7-git/priv/couchspawnkillable $REL_PATH
 
-# We need the shared lib because our toolchain does not support the static lib (libstdc++ stuff)
-cp build/deps/mozilla-current/mozilla-central/js/src/libmozjs.so $REL_PATH/couchdb/bin
+mkdir -p $REL_PATH/erlang/bin/
 
-mkdir $REL_PATH/erlang/lib/geocouch
-cp $GEOCOUCH_HOME/build/*.beam $REL_PATH/erlang/lib/geocouch
+# Generate start.boot
+[[ -f patches/start.boot ]] && rm patches/start.boot
+cd patches
+sh script2boot.sh
+cd ..
 
-###
-# 2) Create couchjs_wrapper script (because we can't link to libmozjs.a and so need LD_LIBRARY_PATH set)
-# 3) Update #!/bin/sh in data/data/$APP_NAME/erlang/lib/couch-1.0.1/priv/couchspawnkillable
-# 4) Reflect new locations and the Android environment
-#
-[[ -f release ]] && rm release
-ln -s $REL_PATH release
-mkdir -p release/couchdb/lib/couchdb/android_icu
-cp -r android_icu release/couchdb/lib/couchdb
-patch -lp0 < patches/release.patch
-rm release
+cp patches/start.boot $REL_PATH/erlang/bin/start.boot
+cp build/deps/otp_rel.package/erts-5.8.5/bin/child_setup $REL_PATH/erlang/bin/child_setup
+cp build/deps/otp_rel.package/erts-5.8.5/bin/inet_gethost $REL_PATH/erlang/bin/inet_gethost
+
+# Create an android default config file
 
 ANDROID_DEFAULT='[couchdb]
 database_dir = %couch_data_dir%/db
 view_index_dir = %couch_data_dir%/db
-util_driver_dir = %couch_installation_dir%/couchdb/lib/couchdb/android_icu/%sdk_int%
+util_driver_dir = %couch_installation_dir%/
 uri_file = %couch_data_dir%/db/couch.uri
 file_compression = none
 
@@ -129,77 +134,24 @@ _spatiallist = {couch_httpd_spatial_list, handle_spatial_list_req_deprecated}'
 echo "$ANDROID_DEFAULT" >> $REL_PATH/couchdb/etc/couchdb/android.default.ini
 touch $REL_PATH/couchdb/etc/couchdb/overrides.ini
 
-COUCHDB_WRAPPER='#!/system/bin/sh -e
-
-export HOME=%couch_installation_dir%
-
-COUCHDB_DIR=$HOME/couchdb
-COUCHDB_BINDIR=$COUCHDB_DIR/bin
-ERLANG_DIR=$HOME/erlang
-ERLANG_BINDIR=$ERLANG_DIR/bin
-ERLANG_LIBDIR=$ERLANG_DIR/erts-5.8.5/bin
-
-export LD_LIBRARY_PATH=$ERLANG_LIBDIR:$COUCHDB_BINDIR:$COUCHDB_DIR/lib/couchdb/bin
-export PATH=$ERLANG_BINDIR:$COUCHDB_BINDIR:$PATH
-export ERL_INETRC=$ERLANG_DIR/bin/erl_inetrc
-export EMU=beam
-export ROOTDIR=$ERLANG_DIR
-export BINDIR=$ERLANG_LIBDIR
-export PROGNAME="${0##*/}"
-
-exec $BINDIR/erlexec $@'
-
-echo "$COUCHDB_WRAPPER" >> $REL_PATH/couchdb/bin/couchdb_wrapper
+# Create couchjs_wrapper script (because we can't link to libmozjs.a and so need LD_LIBRARY_PATH set)
 
 COUCHJS_WRAPPER='#!/system/bin/sh
-export LD_LIBRARY_PATH=%couch_installation_dir%/couchdb/bin
+export LD_LIBRARY_PATH=%couch_installation_dir%/lib
 exec %couch_installation_dir%/couchdb/lib/couchdb/bin/couchjs $@'
 
 echo "$COUCHJS_WRAPPER" >> $REL_PATH/couchdb/bin/couchjs_wrapper
 
 chmod +x $REL_PATH/couchdb/bin/couchjs_wrapper
-chmod +x $REL_PATH/couchdb/bin/couchdb_wrapper
 
-# Build ICU for whatever version of Android was compiled in ~/software/android/sdk/sources
-agcc \
--shared \
--o $REL_PATH/couchdb/lib/couchdb/couch_icu_driver.so $COUCH_HOME/src/couchdb/priv/.libs/libcouch_icu_driver.a \
--licuuc \
--licudata \
--licui18n \
--L$COUCH_ANDROID_HOME/build/deps/otp_rel/erts-5.8.5/bin \
--lbeam
-
-##
-# Remove vestigal files from Couch directory
-# (Futon is in www)
+###
+# 3) Update #!/bin/sh in data/data/$APP_NAME/erlang/lib/couch-1.0.1/priv/couchspawnkillable
+# 4) Reflect new locations and the Android environment
 #
-cd $REL_PATH/couchdb
-rm -rf share/couchdb/www
-rm -rf share/doc
-rm -rf share/man
-rm -rf var
-rm -rf etc/init.d
-rm -rf etc/logrotate.d
-rm -rf etc/couchdb/local.d
-rm -rf etc/couchdb/default.d
-rm -rf lib/couchdb/erlang/lib/etap/
-rm bin/couchjs
-rm bin/couchdb
-rm lib/couchdb/erlang/lib/couch/priv/lib/couch_icu_driver.la
-rm /lib/couchdb/erlang/lib/couch/ebin/couch.app
-
-# Location to ICU will be determined dynamically when Couch is initialized by the Couch-dependant app.
-# See libcouch-android and android_icu/ for more information.
-rm lib/couchdb/couch_icu_driver.so
-
-cd ..
-
-# Strip beam files of debugging symbols
-$ERL_HOME/bootstrap/bin/erl -eval "erlang:display(beam_lib:strip_release(\"couchdb/lib/couchdb/erlang\"))" -s init stop
-$ERL_HOME/bootstrap/bin/erl -eval "erlang:display(beam_lib:strip_release(\"erlang\"))" -s init stop
-
-cd $COUCH_ANDROID_HOME
+[[ -f release ]] && rm release
+ln -s $REL_PATH release
+patch -lp0 < patches/release.patch
+rm release
 
 ##
 # Archive the release
@@ -210,3 +162,64 @@ touch filecount.$(find | wc -l)
 tar -czf ../$RELEASE_FILE filecount.* !(filecount.*)
 cp ../$RELEASE_FILE ../$RELEASE_FILE.jpg
 cd ..
+
+
+# Now build the overlay.zip
+
+cd $COUCH_ANDROID_HOME
+
+mkdir -p $OVERLAY_PATH
+mkdir -p $OVERLAY_PATH/assets/lib/couch/
+cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib/couch-1.2.0a-361a925-git/ebin $OVERLAY_PATH/assets/lib/couch/ebin
+mkdir -p $OVERLAY_PATH/assets/lib/crypto-2.0.3/
+cp -Rdp patches/crypto/crypto-2.0.3/ebin $OVERLAY_PATH/assets/lib/crypto-2.0.3/ebin
+mkdir -p $OVERLAY_PATH/assets/lib/ejson-0.1.0/
+cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib/ejson-0.1.0/ebin $OVERLAY_PATH/assets/lib/ejson-0.1.0/ebin
+mkdir -p $OVERLAY_PATH/assets/lib/erlang-oauth/
+cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib/erlang-oauth/ebin $OVERLAY_PATH/assets/lib/erlang-oauth/ebin
+mkdir -p $OVERLAY_PATH/assets/lib/ibrowse-2.2.0/
+cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib/ibrowse-2.2.0/ebin $OVERLAY_PATH/assets/lib/ibrowse-2.2.0/ebin
+mkdir -p $OVERLAY_PATH/assets/lib/inets-5.7/ebin
+cp -Rdp build/deps/otp_rel.package/otp_rel/lib/inets-5.7/ebin/httpd_util.beam $OVERLAY_PATH/assets/lib/inets-5.7/ebin
+cp -Rdp build/deps/otp_rel.package/otp_rel/lib/inets-5.7/ebin/inets.app $OVERLAY_PATH/assets/lib/inets-5.7/ebin
+mkdir -p $OVERLAY_PATH/assets/lib/kernel-2.14.5/
+cp -Rdp build/deps/otp_rel.package/otp_rel/lib/kernel-2.14.5/ebin $OVERLAY_PATH/assets/lib/kernel-2.14.5/ebin
+mkdir -p $OVERLAY_PATH/assets/lib/mochiweb-1.4.1/
+cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib/mochiweb-1.4.1/ebin $OVERLAY_PATH/assets/lib/mochiweb-1.4.1/ebin
+mkdir -p $OVERLAY_PATH/assets/lib/os_mon-2.2.6/
+cp -Rdp build/deps/otp_rel.package/otp_rel/lib/os_mon-2.2.6/ebin $OVERLAY_PATH/assets/lib/os_mon-2.2.6/ebin
+mkdir -p $OVERLAY_PATH/assets/lib/public_key-0.12/
+cp -Rdp build/deps/otp_rel.package/otp_rel/lib/public_key-0.12/ebin $OVERLAY_PATH/assets/lib/public_key-0.12/ebin
+mkdir -p $OVERLAY_PATH/assets/lib/sasl-2.1.9.4/
+cp -Rdp build/deps/otp_rel.package/otp_rel/lib/sasl-2.1.9.4/ebin $OVERLAY_PATH/assets/lib/sasl-2.1.9.4/ebin
+mkdir -p $OVERLAY_PATH/assets/lib/snappy-1.0.3/
+cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib/snappy-1.0.3/ebin $OVERLAY_PATH/assets/lib/snappy-1.0.3/ebin
+mkdir -p $OVERLAY_PATH/assets/lib/ssl-4.1.6/
+cp -Rdp patches/crypto/ssl-4.1.6/ebin $OVERLAY_PATH/assets/lib/ssl-4.1.6/ebin
+mkdir -p $OVERLAY_PATH/assets/lib/stdlib-1.17.5/
+cp -Rdp build/deps/otp_rel.package/otp_rel/lib/stdlib-1.17.5/ebin $OVERLAY_PATH/assets/lib/stdlib-1.17.5/ebin
+mkdir -p $OVERLAY_PATH/assets/lib/xmerl-1.2.9/ebin/
+cp -Rdp build/deps/otp_rel.package/otp_rel/lib/xmerl-1.2.9/ebin/xmerl_ucs.beam $OVERLAY_PATH/assets/lib/xmerl-1.2.9/ebin/xmerl_ucs.beam
+
+# Geocouch
+mkdir -p $OVERLAY_PATH/assets/lib/geocouch
+cp $GEOCOUCH_HOME/build/*.beam $OVERLAY_PATH/assets/lib/geocouch
+
+#libs
+mkdir -p $OVERLAY_PATH/libs/armeabi
+cp -Rdp build/deps/otp_rel.package/otp_rel/erts-5.8.5/bin/libbeam.so $OVERLAY_PATH/libs/armeabi
+cp -Rdp patches/crypto/libcrypto_nif.so $OVERLAY_PATH/libs/armeabi
+cp -Rdp build/deps/mozilla-current/mozilla-central/js/src/libmozjs.so $OVERLAY_PATH/libs/armeabi
+
+# Strip beam files of debugging symbols
+$ERL_HOME/bootstrap/bin/erl -eval "erlang:display(beam_lib:strip_release(\"$OVERLAY_PATH/assets\"))" -s init stop
+
+##
+# Archive the overlay
+#
+cd $OVERLAY_PATH
+OVERLAY_FILE=overlay-$1-$BUILD_VERSION.zip
+zip -r ../$OVERLAY_FILE *
+cd ..
+
+cd $COUCH_ANDROID_HOME

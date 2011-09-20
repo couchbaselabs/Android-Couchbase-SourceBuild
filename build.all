@@ -12,3 +12,5 @@ do
         exit 1
     fi
 done
+
+./build.final 1.0-dp >& build.log.final
