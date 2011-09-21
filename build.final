@@ -12,13 +12,9 @@ if [ -z "$1" ]; then
 fi
 
 DATE=$(date +"%Y-%m-%d_%H-%M-%S")
-REL_NAME="release-$DATE"
-REL_PATH="out/$REL_NAME"
 OVERLAY_NAME="overlay-$DATE"
 OVERLAY_PATH="out/$OVERLAY_NAME"
-
-mkdir -p $REL_PATH
-
+INSTALL_PATH="$OVERLAY_PATH/assets/install"
 BUILD_VERSION=$(git describe --tags --always)
 
 ##
@@ -27,61 +23,25 @@ BUILD_VERSION=$(git describe --tags --always)
 
 cp -Rdp build/deps/otp_rel build/deps/otp_rel.package
 
-cd build/deps/otp_rel.package
-
-./Install -cross -sasl /data/data/%app_name%/erlang
-rm Install
-
-# Remove unnecessary files
-shopt -s extglob
-
-rm -rf erts-5.8.5/doc erts-5.8.5/include erts-5.8.5/man erts-5.8.5/src misc releases usr
-
-rm bin/dialyzer bin/erlc bin/escript bin/run_erl bin/to_erl bin/typer bin/ct_run bin/epmd bin/erl bin/run_test bin/start
-
-rm erts-5.8.5/bin/dialyzer erts-5.8.5/bin/erlc erts-5.8.5/bin/escript erts-5.8.5/bin/run_erl erts-5.8.5/bin/to_erl erts-5.8.5/bin/typer erts-5.8.5/bin/erl erts-5.8.5/bin/erl.src erts-5.8.5/bin/ct_run erts-5.8.5/bin/start erts-5.8.5/bin/start.src erts-5.8.5/bin/start_erl.src
-
-cd lib
-
-rm -rf !(os_mon-2.2.6|crypto-2.0.3|erts-5.8.5|inets-5.7|kernel-2.14.5|public_key-0.12|sasl-2.1.9.4|ssl-4.1.6|stdlib-1.17.5|xmerl-1.2.9)
-
-cd xmerl-1.2.9/ebin/
-rm !(xmerl_ucs.beam)
-cd ../..
-
-cd inets-5.7/ebin/
-rm !(httpd_util.beam|httpd_util|inets.app)
-cd ../..
-rm -rf inets-5.7/priv
-
-#rm public_key-0.12/asn1/OTP-PUB-KEY.erl
-#rm ssl-4.1.6/pkix/OTP-PKIX.erl
-
-# Remove vestigal files
-find . -depth -name src -type d -exec rm -rf {} \;
-find . -depth -name doc -type d -exec rm -rf {} \;
-find . -depth -name examples -type d -exec rm -rf {} \;
-find . -depth -name include -type d -exec rm -rf {} \;
-
 cd $COUCH_ANDROID_HOME
 
-##
-# Finally move things into place
-#
+# Now build the overlay.zip
+mkdir -p $OVERLAY_PATH
 
-mkdir -p $REL_PATH/couchdb/bin/
-mkdir -p $REL_PATH/couchdb/etc/
-cp -Rdp /data/data/%app_name%/couchdb/etc/couchdb $REL_PATH/couchdb/etc/couchdb
-mkdir -p $REL_PATH/couchdb/etc/
-cp -Rdp /data/data/%app_name%/couchdb/etc/default $REL_PATH/couchdb/etc/default
-mkdir -p $REL_PATH/couchdb/lib/couchdb/bin/
-cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/bin/couchjs $REL_PATH/couchdb/lib/couchdb/bin/couchjs
-mkdir -p $REL_PATH/couchdb/share/couchdb/
-cp -Rdp /data/data/%app_name%/couchdb/share/couchdb/server $REL_PATH/couchdb/share/couchdb/server
+mkdir -p $INSTALL_PATH
+mkdir -p $INSTALL_PATH/couchdb/bin/
+mkdir -p $INSTALL_PATH/couchdb/etc/
+cp -Rdp /data/data/%app_name%/couchdb/etc/couchdb $INSTALL_PATH/couchdb/etc/couchdb
+mkdir -p $INSTALL_PATH/couchdb/etc/
+cp -Rdp /data/data/%app_name%/couchdb/etc/default $INSTALL_PATH/couchdb/etc/default
+mkdir -p $INSTALL_PATH/couchdb/lib/couchdb/bin/
+cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/bin/couchjs $INSTALL_PATH/couchdb/lib/couchdb/bin/couchjs
+mkdir -p $INSTALL_PATH/couchdb/share/couchdb/
+cp -Rdp /data/data/%app_name%/couchdb/share/couchdb/server $INSTALL_PATH/couchdb/share/couchdb/server
 
-cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib/couch-1.2.0a-8899be7-git/priv/couchspawnkillable $REL_PATH
+cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib/couch-*/priv/couchspawnkillable $INSTALL_PATH
 
-mkdir -p $REL_PATH/erlang/bin/
+mkdir -p $INSTALL_PATH/erlang/bin/
 
 # Generate start.boot
 [[ -f patches/start.boot ]] && rm patches/start.boot
@@ -89,9 +49,9 @@ cd patches
 sh script2boot.sh
 cd ..
 
-cp patches/start.boot $REL_PATH/erlang/bin/start.boot
-cp build/deps/otp_rel.package/erts-5.8.5/bin/child_setup $REL_PATH/erlang/bin/child_setup
-cp build/deps/otp_rel.package/erts-5.8.5/bin/inet_gethost $REL_PATH/erlang/bin/inet_gethost
+cp patches/start.boot $INSTALL_PATH/erlang/bin/start.boot
+cp build/deps/otp_rel.package/erts-5.8.5/bin/child_setup $INSTALL_PATH/erlang/bin/child_setup
+cp build/deps/otp_rel.package/erts-5.8.5/bin/inet_gethost $INSTALL_PATH/erlang/bin/inet_gethost
 
 # Create an android default config file
 
@@ -131,8 +91,8 @@ _spatial/_compact = {couch_httpd_spatial, handle_compact_req}
 ;deprecated API
 _spatiallist = {couch_httpd_spatial_list, handle_spatial_list_req_deprecated}'
 
-echo "$ANDROID_DEFAULT" >> $REL_PATH/couchdb/etc/couchdb/android.default.ini
-touch $REL_PATH/couchdb/etc/couchdb/overrides.ini
+echo "$ANDROID_DEFAULT" >> $INSTALL_PATH/couchdb/etc/couchdb/android.default.ini
+touch $INSTALL_PATH/couchdb/etc/couchdb/overrides.ini
 
 # Create couchjs_wrapper script (because we can't link to libmozjs.a and so need LD_LIBRARY_PATH set)
 
@@ -140,37 +100,21 @@ COUCHJS_WRAPPER='#!/system/bin/sh
 export LD_LIBRARY_PATH=%couch_installation_dir%/lib
 exec %couch_installation_dir%/couchdb/lib/couchdb/bin/couchjs $@'
 
-echo "$COUCHJS_WRAPPER" >> $REL_PATH/couchdb/bin/couchjs_wrapper
+echo "$COUCHJS_WRAPPER" >> $INSTALL_PATH/couchdb/bin/couchjs_wrapper
 
-chmod +x $REL_PATH/couchdb/bin/couchjs_wrapper
+chmod +x $INSTALL_PATH/couchdb/bin/couchjs_wrapper
 
 ###
 # 3) Update #!/bin/sh in data/data/$APP_NAME/erlang/lib/couch-1.0.1/priv/couchspawnkillable
 # 4) Reflect new locations and the Android environment
 #
 [[ -f release ]] && rm release
-ln -s $REL_PATH release
+ln -s $INSTALL_PATH release
 patch -lp0 < patches/release.patch
 rm release
 
-##
-# Archive the release
-#
-cd $REL_PATH
-RELEASE_FILE=couchbase-$1-$BUILD_VERSION.tgz
-touch filecount.$(find | wc -l)
-tar -czf ../$RELEASE_FILE filecount.* !(filecount.*)
-cp ../$RELEASE_FILE ../$RELEASE_FILE.jpg
-cd ..
-
-
-# Now build the overlay.zip
-
-cd $COUCH_ANDROID_HOME
-
-mkdir -p $OVERLAY_PATH
 mkdir -p $OVERLAY_PATH/assets/lib/couch/
-cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib/couch-1.2.0a-361a925-git/ebin $OVERLAY_PATH/assets/lib/couch/ebin
+cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib/couch-*/ebin $OVERLAY_PATH/assets/lib/couch/ebin
 mkdir -p $OVERLAY_PATH/assets/lib/crypto-2.0.3/
 cp -Rdp patches/crypto/crypto-2.0.3/ebin $OVERLAY_PATH/assets/lib/crypto-2.0.3/ebin
 mkdir -p $OVERLAY_PATH/assets/lib/ejson-0.1.0/

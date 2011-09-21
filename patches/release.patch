@@ -1,4 +1,4 @@
-diff -ruN release.bak/couchspawnkillable release/couch/priv/couchspawnkillable
+diff -ruN release.bak/couchspawnkillable release/couchspawnkillable
 --- release.bak/couchspawnkillable	2011-02-05 01:26:00.000000000 -0700
 +++ release/couchspawnkillable	2011-02-05 01:48:49.000000000 -0700
 @@ -1,4 +1,4 @@
