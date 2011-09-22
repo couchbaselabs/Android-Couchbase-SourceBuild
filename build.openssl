@@ -1,0 +1,51 @@
+#!/bin/bash -x
+#
+
+source scripts/env
+
+mkdir -p $COUCH_ANDROID_HOME/build/deps/openssl
+cd $COUCH_ANDROID_HOME/build/deps/openssl
+
+[[ -f android-platform_external_openssl.tar.gz ]] || wget -O android-platform_external_openssl.tar.gz https://github.com/android/platform_external_openssl/tarball/android-sdk-tools_r12
+
+tar -zxf android-platform_external_openssl.tar.gz
+
+ln -s android-platform_external_openssl-* android-platform_external_openssl
+
+# now get patches to build with NDK
+
+[[ -f guardianproject-openssl-android.tar.gz ]] || wget -O guardianproject-openssl-android.tar.gz https://github.com/guardianproject/openssl-android/tarball/master
+
+tar -zxf guardianproject-openssl-android.tar.gz
+
+ln -s guardianproject-openssl-android-* guardianproject-openssl-android
+
+# copy files and apply patches
+touch android-platform_external_openssl/AndroidManifest.xml
+cp guardianproject-openssl-android/default.properties android-platform_external_openssl
+cp guardianproject-openssl-android/openssl.config android-platform_external_openssl
+mkdir android-platform_external_openssl/jni
+cp guardianproject-openssl-android/jni/Application.mk android-platform_external_openssl/jni/
+cp guardianproject-openssl-android/apps/Android.mk android-platform_external_openssl/apps/Android.mk
+cp guardianproject-openssl-android/crypto/Android.mk android-platform_external_openssl/crypto/Android.mk
+cp guardianproject-openssl-android/ssl/Android.mk android-platform_external_openssl/ssl/Android.mk
+
+#rename some files
+mv android-platform_external_openssl/crypto/aes/asm/aes-armv4.s android-platform_external_openssl/crypto/aes/asm/aes-armv4.S
+mv android-platform_external_openssl/crypto/bn/asm/armv4-mont.s android-platform_external_openssl/crypto/bn/asm/armv4-mont.S
+mv android-platform_external_openssl/crypto/bn/asm/mips3.s android-platform_external_openssl/crypto/bn/asm/mips3.S
+mv android-platform_external_openssl/crypto/bn/asm/pa-risc2.s android-platform_external_openssl/crypto/bn/asm/pa-risc2.S
+mv android-platform_external_openssl/crypto/bn/asm/pa-risc2W.s android-platform_external_openssl/crypto/bn/asm/pa-risc2W.S
+mv android-platform_external_openssl/crypto/sha/asm/sha1-armv4-large.s android-platform_external_openssl/crypto/sha/asm/sha1-armv4-large.S
+mv android-platform_external_openssl/crypto/sha/asm/sha256-armv4.s  android-platform_external_openssl/crypto/sha/asm/sha256-armv4.S
+mv android-platform_external_openssl/crypto/sha/asm/sha512-armv4.s android-platform_external_openssl/crypto/sha/asm/sha512-armv4.S
+
+cd android-platform_external_openssl
+$ANDROID_SDK_ROOT/ndk-build
+
+# create a symbolic link to help erlang find the libs
+ln -s libs/armeabi/ lib
+
+LASTSTATUS=$?
+
+exit $LASTSTATUS
