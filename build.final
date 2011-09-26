@@ -17,12 +17,6 @@ OVERLAY_PATH="out/$OVERLAY_NAME"
 INSTALL_PATH="$OVERLAY_PATH/assets/install"
 BUILD_VERSION=$(git describe --tags --always)
 
-##
-# Configure and package Erlang/OTP
-#
-
-cp -Rdp build/deps/otp_rel build/deps/otp_rel.package
-
 cd $COUCH_ANDROID_HOME
 
 # Now build the overlay.zip
@@ -50,8 +44,8 @@ sh script2boot.sh
 cd ..
 
 cp patches/start.boot $INSTALL_PATH/erlang/bin/start.boot
-cp build/deps/otp_rel.package/erts-5.8.5/bin/child_setup $INSTALL_PATH/erlang/bin/child_setup
-cp build/deps/otp_rel.package/erts-5.8.5/bin/inet_gethost $INSTALL_PATH/erlang/bin/inet_gethost
+cp build/deps/otp_rel/erts-5.8.5/bin/child_setup $INSTALL_PATH/erlang/bin/child_setup
+cp build/deps/otp_rel/erts-5.8.5/bin/inet_gethost $INSTALL_PATH/erlang/bin/inet_gethost
 
 # Create an android default config file
 
@@ -116,7 +110,7 @@ rm release
 mkdir -p $OVERLAY_PATH/assets/lib/couch/
 cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib/couch-*/ebin $OVERLAY_PATH/assets/lib/couch/ebin
 mkdir -p $OVERLAY_PATH/assets/lib/crypto-2.0.3/
-cp -Rdp build/deps/otp_rel.package/otp_rel/lib/crypto-2.0.3/ebin $OVERLAY_PATH/assets/lib/crypto-2.0.3/ebin
+cp -Rdp build/deps/otp_rel/lib/crypto-2.0.3/ebin $OVERLAY_PATH/assets/lib/crypto-2.0.3/ebin
 mkdir -p $OVERLAY_PATH/assets/lib/ejson-0.1.0/
 cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib/ejson-0.1.0/ebin $OVERLAY_PATH/assets/lib/ejson-0.1.0/ebin
 mkdir -p $OVERLAY_PATH/assets/lib/erlang-oauth/
@@ -124,26 +118,26 @@ cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib/erlang-oauth/ebin $
 mkdir -p $OVERLAY_PATH/assets/lib/ibrowse-2.2.0/
 cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib/ibrowse-2.2.0/ebin $OVERLAY_PATH/assets/lib/ibrowse-2.2.0/ebin
 mkdir -p $OVERLAY_PATH/assets/lib/inets-5.7/ebin
-cp -Rdp build/deps/otp_rel.package/otp_rel/lib/inets-5.7/ebin/httpd_util.beam $OVERLAY_PATH/assets/lib/inets-5.7/ebin
-cp -Rdp build/deps/otp_rel.package/otp_rel/lib/inets-5.7/ebin/inets.app $OVERLAY_PATH/assets/lib/inets-5.7/ebin
+cp -Rdp build/deps/otp_rel/lib/inets-5.7/ebin/httpd_util.beam $OVERLAY_PATH/assets/lib/inets-5.7/ebin
+cp -Rdp build/deps/otp_rel/lib/inets-5.7/ebin/inets.app $OVERLAY_PATH/assets/lib/inets-5.7/ebin
 mkdir -p $OVERLAY_PATH/assets/lib/kernel-2.14.5/
-cp -Rdp build/deps/otp_rel.package/otp_rel/lib/kernel-2.14.5/ebin $OVERLAY_PATH/assets/lib/kernel-2.14.5/ebin
+cp -Rdp build/deps/otp_rel/lib/kernel-2.14.5/ebin $OVERLAY_PATH/assets/lib/kernel-2.14.5/ebin
 mkdir -p $OVERLAY_PATH/assets/lib/mochiweb-1.4.1/
 cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib/mochiweb-1.4.1/ebin $OVERLAY_PATH/assets/lib/mochiweb-1.4.1/ebin
 mkdir -p $OVERLAY_PATH/assets/lib/os_mon-2.2.6/
-cp -Rdp build/deps/otp_rel.package/otp_rel/lib/os_mon-2.2.6/ebin $OVERLAY_PATH/assets/lib/os_mon-2.2.6/ebin
+cp -Rdp build/deps/otp_rel/lib/os_mon-2.2.6/ebin $OVERLAY_PATH/assets/lib/os_mon-2.2.6/ebin
 mkdir -p $OVERLAY_PATH/assets/lib/public_key-0.12/
-cp -Rdp build/deps/otp_rel.package/otp_rel/lib/public_key-0.12/ebin $OVERLAY_PATH/assets/lib/public_key-0.12/ebin
+cp -Rdp build/deps/otp_rel/lib/public_key-0.12/ebin $OVERLAY_PATH/assets/lib/public_key-0.12/ebin
 mkdir -p $OVERLAY_PATH/assets/lib/sasl-2.1.9.4/
-cp -Rdp build/deps/otp_rel.package/otp_rel/lib/sasl-2.1.9.4/ebin $OVERLAY_PATH/assets/lib/sasl-2.1.9.4/ebin
+cp -Rdp build/deps/otp_rel/lib/sasl-2.1.9.4/ebin $OVERLAY_PATH/assets/lib/sasl-2.1.9.4/ebin
 mkdir -p $OVERLAY_PATH/assets/lib/snappy-1.0.3/
 cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib/snappy-1.0.3/ebin $OVERLAY_PATH/assets/lib/snappy-1.0.3/ebin
 mkdir -p $OVERLAY_PATH/assets/lib/ssl-4.1.6/
-cp -Rdp build/deps/otp_rel.package/otp_rel/lib/ssl-4.1.6/ebin $OVERLAY_PATH/assets/lib/ssl-4.1.6/ebin
+cp -Rdp build/deps/otp_rel/lib/ssl-4.1.6/ebin $OVERLAY_PATH/assets/lib/ssl-4.1.6/ebin
 mkdir -p $OVERLAY_PATH/assets/lib/stdlib-1.17.5/
-cp -Rdp build/deps/otp_rel.package/otp_rel/lib/stdlib-1.17.5/ebin $OVERLAY_PATH/assets/lib/stdlib-1.17.5/ebin
+cp -Rdp build/deps/otp_rel/lib/stdlib-1.17.5/ebin $OVERLAY_PATH/assets/lib/stdlib-1.17.5/ebin
 mkdir -p $OVERLAY_PATH/assets/lib/xmerl-1.2.9/ebin/
-cp -Rdp build/deps/otp_rel.package/otp_rel/lib/xmerl-1.2.9/ebin/xmerl_ucs.beam $OVERLAY_PATH/assets/lib/xmerl-1.2.9/ebin/xmerl_ucs.beam
+cp -Rdp build/deps/otp_rel/lib/xmerl-1.2.9/ebin/xmerl_ucs.beam $OVERLAY_PATH/assets/lib/xmerl-1.2.9/ebin/xmerl_ucs.beam
 
 # Geocouch
 mkdir -p $OVERLAY_PATH/assets/lib/geocouch
@@ -151,8 +145,8 @@ cp $GEOCOUCH_HOME/build/*.beam $OVERLAY_PATH/assets/lib/geocouch
 
 #libs
 mkdir -p $OVERLAY_PATH/libs/armeabi
-cp -Rdp build/deps/otp_rel.package/otp_rel/erts-5.8.5/bin/libbeam.so $OVERLAY_PATH/libs/armeabi
-cp -Rdp build/deps/otp_rel.package/otp_rel/lib/crypto-2.0.3/priv/lib/crypto.so  $OVERLAY_PATH/libs/armeabi/libcrypto_nif.so
+cp -Rdp build/deps/otp_rel/erts-5.8.5/bin/libbeam.so $OVERLAY_PATH/libs/armeabi
+cp -Rdp build/deps/otp_rel/lib/crypto-2.0.3/priv/lib/crypto.so  $OVERLAY_PATH/libs/armeabi/libcrypto_nif.so
 cp -Rdp build/deps/mozilla-current/mozilla-central/js/src/libmozjs.so $OVERLAY_PATH/libs/armeabi
 
 # Strip unneeded symbols from the libs
