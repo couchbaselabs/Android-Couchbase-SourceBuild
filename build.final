@@ -148,11 +148,13 @@ mkdir -p $OVERLAY_PATH/libs/armeabi
 cp -Rdp build/deps/otp_rel/erts-5.8.5/bin/libbeam.so $OVERLAY_PATH/libs/armeabi
 cp -Rdp build/deps/otp_rel/lib/crypto-2.0.3/priv/lib/crypto.so  $OVERLAY_PATH/libs/armeabi/libcrypto_nif.so
 cp -Rdp build/deps/mozilla-current/mozilla-central/js/src/libmozjs.so $OVERLAY_PATH/libs/armeabi
+cp -Rdp ../couchdb/src/snappy/priv/snappy_nif.so $OVERLAY_PATH/libs/armeabi/libsnappy_nif.so
 
 # Strip unneeded symbols from the libs
 arm-linux-androideabi-strip --strip-unneeded $OVERLAY_PATH/libs/armeabi/libbeam.so
 arm-linux-androideabi-strip --strip-unneeded $OVERLAY_PATH/libs/armeabi/libcrypto_nif.so
 arm-linux-androideabi-strip --strip-unneeded $OVERLAY_PATH/libs/armeabi/libmozjs.so
+arm-linux-androideabi-strip --strip-unneeded $OVERLAY_PATH/libs/armeabi/snappy_nif.so
 
 # Strip beam files of debugging symbols
 $ERL_HOME/bootstrap/bin/erl -eval "erlang:display(beam_lib:strip_release(\"$OVERLAY_PATH/assets\"))" -s init stop

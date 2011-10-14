@@ -22,8 +22,10 @@ ERL_LIBS=$ERL_HOME/lib \
 ERL=$ERL_HOME/bootstrap/bin/erl \
 ERLC=$ERL_HOME/bootstrap/bin/erlc \
 CXX=agcc \
+CXXFLAGS="-fno-rtti -fno-exceptions -I$COUCH_ANDROID_HOME/build/deps/otp_rel/usr/include -I$ANDROID_SDK_ROOT/sources/cxx-stl/stlport/stlport/" \
 CC=agcc \
 ./configure \
+--with-ejson=no \
 --host=arm-eabi \
 --prefix=/data/data/%app_name%/couchdb \
 --with-erlang=$COUCH_ANDROID_HOME/build/deps/otp_rel/usr/include \
@@ -31,5 +33,19 @@ CC=agcc \
 --with-js-lib="$COUCH_ANDROID_HOME/build/deps/mozilla-current/mozilla-central/js/src"
 
 export ERL_LIBS=$ERL_HOME/lib
+make -s
+make install
+
+# fix up the snappy nif
+cd src/snappy
+agcc -shared -o .libs/snappy_nif.so \
+snappy_nif.o snappy.o snappy-sinksource.o snappy-stubs-internal.o \
+-L../../../Android-Couchbase-SourceBuild/build/deps/otp_rel/erts-5.8.5/bin/ \
+-lbeam \
+-L../../../Android-Couchbase-SourceBuild/build/deps/android-ndk/android-ndk-r6b/sources/cxx-stl/stlport/libs/armeabi \
+-lstlport_static \
+-lgcc \
+-lstdc++
+
 make -s
 make install
