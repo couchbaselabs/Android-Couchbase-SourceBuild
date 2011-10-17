@@ -1,7 +1,7 @@
 # Important paths for Android binaries
 
 export COUCH_ANDROID_HOME=$(pwd)
-export ANDROID_SDK_ROOT=$COUCH_ANDROID_HOME/build/deps/android-ndk/android-ndk-r6b
+export ANDROID_NDK_ROOT=$COUCH_ANDROID_HOME/build/deps/android-ndk/android-ndk-r6b
 export ANDROID_TARGET=froyo
 
 export ERL_HOME=$COUCH_ANDROID_HOME/../erlang
@@ -10,9 +10,9 @@ export GEOCOUCH_HOME=$COUCH_ANDROID_HOME/../geocouch
 
 paths="
 $(pwd)/scripts
-$ANDROID_SDK_ROOT/other/apk
-$ANDROID_SDK_ROOT/toolchains/arm-eabi-4.4.0/bin/
-$ANDROID_SDK_ROOT/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin
+$ANDROID_NDK_ROOT/other/apk
+$ANDROID_NDK_ROOT/toolchains/arm-eabi-4.4.0/bin/
+$ANDROID_NDK_ROOT/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin
 "
 
 for i in $paths

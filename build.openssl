@@ -41,7 +41,7 @@ mv android-platform_external_openssl/crypto/sha/asm/sha256-armv4.s  android-plat
 mv android-platform_external_openssl/crypto/sha/asm/sha512-armv4.s android-platform_external_openssl/crypto/sha/asm/sha512-armv4.S
 
 cd android-platform_external_openssl
-$ANDROID_SDK_ROOT/ndk-build
+$ANDROID_NDK_ROOT/ndk-build
 
 # create a symbolic link to help erlang find the libs
 ln -s libs/armeabi/ lib

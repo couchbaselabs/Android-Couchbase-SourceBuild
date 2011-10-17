@@ -22,7 +22,7 @@ ERL_LIBS=$ERL_HOME/lib \
 ERL=$ERL_HOME/bootstrap/bin/erl \
 ERLC=$ERL_HOME/bootstrap/bin/erlc \
 CXX=agcc \
-CXXFLAGS="-fno-rtti -fno-exceptions -I$COUCH_ANDROID_HOME/build/deps/otp_rel/usr/include -I$ANDROID_SDK_ROOT/sources/cxx-stl/stlport/stlport/" \
+CXXFLAGS="-fno-rtti -fno-exceptions -I$COUCH_ANDROID_HOME/build/deps/otp_rel/usr/include -I$ANDROID_NDK_ROOT/sources/cxx-stl/stlport/stlport/" \
 CC=agcc \
 ./configure \
 --with-ejson=no \
