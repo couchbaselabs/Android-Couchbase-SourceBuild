@@ -7,6 +7,10 @@ build/deps/curl-7.20.0/
 build/deps/mozilla-current/mozilla-central
 build/deps/mozilla-current/mozilla-central-bb9089ae2322/
 build/deps/ndk/android-ndk-r4c/
+build/deps/openssl/android-platform_external_openssl
+build/deps/openssl/android-platform_external_openssl-174ea74/
+build/deps/openssl/guardianproject-openssl-android
+build/deps/openssl/guardianproject-openssl-android-1a3c579/
 build/deps/otp/
 build/deps/otp_rel/
 out/
