@@ -3,6 +3,12 @@
 
 source scripts/env
 
+# Make sure we have a valid environment before we continue
+./scripts/checkenv
+if [[ $? -ne 0 ]]; then
+    exit 1
+fi
+
 ANDROID_NDK=$COUCH_ANDROID_HOME/build/deps/ndk/android-ndk-r4c
 
 cd $COUCH_ANDROID_HOME/build/deps/mozilla-current/mozilla-central/js/src

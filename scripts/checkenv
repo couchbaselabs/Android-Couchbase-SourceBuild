@@ -1,0 +1,11 @@
+# Check that these are set correctly
+if [ -z "$ANDROID_NDK_ROOT" ]; then
+    echo "You must set ANDROID_NDK_ROOT"
+    exit 1;
+fi
+
+if [ -z "$ANDROID_SDK_ROOT" ]; then
+    echo "You must set ANDROID_SDK_ROOT"
+    exit 1;
+fi
+exit 0;

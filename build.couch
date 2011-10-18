@@ -3,6 +3,12 @@
 
 source scripts/env
 
+# Make sure we have a valid environment before we continue
+./scripts/checkenv
+if [[ $? -ne 0 ]]; then
+    exit 1
+fi
+
 if [[ ! -d /data ]]; then
     WHOAMI=$(whoami)
     echo "The /data directory required by this build script does not exist!"
