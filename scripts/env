@@ -1,15 +1,15 @@
 # Configure paths to Android SDK and NDK or set environment variables yourself
-#ANDROID_NDK_ROOT=
-#ANDROID_SDK_ROOT=
+#export ANDROID_NDK_ROOT=
+#export ANDROID_SDK_ROOT=
 
 # Important paths for Android binaries
 
 export COUCH_ANDROID_HOME=$(pwd)
-export ANDROID_TARGET=froyo
 
 export ERL_HOME=$COUCH_ANDROID_HOME/../erlang
 export COUCH_HOME=$COUCH_ANDROID_HOME/../couchdb
 export GEOCOUCH_HOME=$COUCH_ANDROID_HOME/../geocouch
+export COUCHBASE_SERVICE_HOME=$COUCH_ANDROID_HOME/../Android-Couchbase
 
 paths="
 $(pwd)/scripts

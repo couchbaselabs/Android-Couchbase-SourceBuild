@@ -1,0 +1,18 @@
+#!/bin/bash -x
+#
+
+source scripts/env
+
+# Make sure we have a valid environment before we continue
+./scripts/checkenv
+if [[ $? -ne 0 ]]; then
+    exit 1
+fi
+
+cd $COUCHBASE_SERVICE_HOME
+
+# build our jni code
+ant -Dsdk.dir=$ANDROID_SDK_ROOT -Dndk.dir=$ANDROID_NDK_ROOT jni
+
+# build couchbase.jar
+ant -Dsdk.dir=$ANDROID_SDK_ROOT -Dndk.dir=$ANDROID_NDK_ROOT -Dextensible.libs.classpath=$ERL_HOME/lib/jinterface/priv/  couchbase-jar

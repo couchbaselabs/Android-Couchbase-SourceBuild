@@ -48,7 +48,7 @@ agcc -shared -o .libs/snappy_nif.so \
 snappy_nif.o snappy.o snappy-sinksource.o snappy-stubs-internal.o \
 -L../../../Android-Couchbase-SourceBuild/build/deps/otp_rel/erts-5.8.5/bin/ \
 -lbeam \
--L../../../Android-Couchbase-SourceBuild/build/deps/android-ndk/android-ndk-r6b/sources/cxx-stl/stlport/libs/armeabi \
+-L$ANDROID_NDK_ROOT/sources/cxx-stl/stlport/libs/armeabi \
 -lstlport_static \
 -lgcc \
 -lstdc++

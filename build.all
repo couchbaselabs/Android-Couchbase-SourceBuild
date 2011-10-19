@@ -2,7 +2,7 @@
 # Builds all components but does not finalize the release
 #
 
-for i in openssl resetmz nspr js erlang couch geocouch
+for i in openssl resetmz nspr js erlang couch geocouch couchservice
 do
     echo "Now building $i"
     ./build.$i >& build.log.$i
