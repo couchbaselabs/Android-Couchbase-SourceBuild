@@ -13,4 +13,5 @@ build/deps/openssl/guardianproject-openssl-android
 build/deps/openssl/guardianproject-openssl-android-1a3c579/
 build/deps/otp/
 build/deps/otp_rel/
+patches/start.boot
 out/
