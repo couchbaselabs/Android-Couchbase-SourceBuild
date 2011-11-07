@@ -161,7 +161,7 @@ cp -Rdp $COUCHBASE_SERVICE_HOME/libs/armeabi/libcom_couchbase_android_ErlangThre
 arm-linux-androideabi-strip --strip-unneeded $OVERLAY_PATH/libs/armeabi/libbeam.so
 arm-linux-androideabi-strip --strip-unneeded $OVERLAY_PATH/libs/armeabi/libcrypto_nif.so
 arm-linux-androideabi-strip --strip-unneeded $OVERLAY_PATH/libs/armeabi/libmozjs.so
-arm-linux-androideabi-strip --strip-unneeded $OVERLAY_PATH/libs/armeabi/snappy_nif.so
+arm-linux-androideabi-strip --strip-unneeded $OVERLAY_PATH/libs/armeabi/libsnappy_nif.so
 arm-linux-androideabi-strip --strip-unneeded $OVERLAY_PATH/libs/armeabi/libcom_couchbase_android_ErlangThread.so
 
 # Strip beam files of debugging symbols
