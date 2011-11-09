@@ -11,6 +11,8 @@ fi
 
 cd $COUCHBASE_SERVICE_HOME
 
+touch local.properties
+
 # build our jni code
 ant -Dsdk.dir=$ANDROID_SDK_ROOT -Dndk.dir=$ANDROID_NDK_ROOT jni
 
