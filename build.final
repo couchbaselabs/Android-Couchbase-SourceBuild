@@ -165,7 +165,7 @@ arm-linux-androideabi-strip --strip-unneeded $OVERLAY_PATH/libs/armeabi/libsnapp
 arm-linux-androideabi-strip --strip-unneeded $OVERLAY_PATH/libs/armeabi/libcom_couchbase_android_ErlangThread.so
 
 # Strip beam files of debugging symbols
-$ERL_HOME/bootstrap/bin/erl -eval "erlang:display(beam_lib:strip_release(\"$OVERLAY_PATH/assets\"))" -s init stop
+$ERL_HOME/bootstrap/bin/erl -noinput -eval "erlang:display(beam_lib:strip_release(\"$OVERLAY_PATH/assets\"))" -s init stop
 
 ##
 # Archive the overlay
