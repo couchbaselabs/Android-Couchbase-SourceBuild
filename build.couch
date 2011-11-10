@@ -31,7 +31,7 @@ CXX=agcc \
 CXXFLAGS="-fno-rtti -fno-exceptions -I$COUCH_ANDROID_HOME/build/deps/otp_rel/usr/include -I$ANDROID_NDK_ROOT/sources/cxx-stl/stlport/stlport/" \
 CC=agcc \
 ./configure \
---with-ejson=no \
+--with-ejson-compare=no \
 --host=arm-eabi \
 --prefix=/data/data/%app_name%/couchdb \
 --with-erlang=$COUCH_ANDROID_HOME/build/deps/otp_rel/usr/include \
