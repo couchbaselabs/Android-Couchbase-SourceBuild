@@ -29,6 +29,7 @@ ERL=$ERL_HOME/bootstrap/bin/erl \
 ERLC=$ERL_HOME/bootstrap/bin/erlc \
 CXX=agcc \
 CXXFLAGS="-fno-rtti -fno-exceptions -I$COUCH_ANDROID_HOME/build/deps/otp_rel/usr/include -I$ANDROID_NDK_ROOT/sources/cxx-stl/stlport/stlport/" \
+CFLAGS="-I$ERL_HOME/erts/emulator/beam/ -I$ERL_HOME/erts/include/arm-unknown-eabi/" \
 CC=agcc \
 ./configure \
 --with-ejson-compare=no \
