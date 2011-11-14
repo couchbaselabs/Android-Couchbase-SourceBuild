@@ -191,6 +191,7 @@ zip -r $COUCHBASE_FILE overlay.zip $COUCHBASE_NAME
 #
 cp -Rdp $COUCHBASE_NAME/script/couchbase.xml .
 cp -Rdp $COUCHBASE_SERVICE_HOME/doc/README.txt .
-zip Android-Couchbase.zip $COUCHBASE_FILE couchbase.xml README.txt
+repo manifest -r -o manifest.xml
+zip Android-Couchbase.zip $COUCHBASE_FILE couchbase.xml README.txt manifest.xml
 
 cd $COUCH_ANDROID_HOME
