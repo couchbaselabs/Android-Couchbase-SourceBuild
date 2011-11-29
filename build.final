@@ -146,7 +146,7 @@ cp $GEOCOUCH_HOME/build/*.beam $OVERLAY_PATH/assets/lib/geocouch
 
 # libs
 mkdir -p $OVERLAY_PATH/libs
-cp -Rdp $COUCHBASE_SERVICE_HOME/bin/couchbase.jar $OVERLAY_PATH/libs/
+cp -Rdp $COUCHBASE_SERVICE_HOME/bin/couchbase-$1.jar $OVERLAY_PATH/libs/
 cp -Rdp build/deps/otp_rel/lib/jinterface-1.5.4/priv/OtpErlang.jar $OVERLAY_PATH/libs/
 
 # native libs
@@ -180,7 +180,7 @@ cd $COUCH_ANDROID_HOME
 #
 cd out
 mkdir -p $COUCHBASE_NAME
-cp -Rdp $COUCHBASE_SERVICE_HOME/script $COUCHBASE_NAME
+cp -Rdp $COUCHBASE_SERVICE_HOME/bin/script $COUCHBASE_NAME
 cp $OVERLAY_FILE overlay.zip
 
 COUCHBASE_FILE="Couchbase.zip"
