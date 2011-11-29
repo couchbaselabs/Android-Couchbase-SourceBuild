@@ -11,6 +11,11 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+if [ -z "$2" ]; then
+    echo "Give me a release number for OTP/Erlang bub!"
+    exit 1
+fi
+
 DATE=$(date +"%Y-%m-%d_%H-%M-%S")
 OVERLAY_NAME="overlay-$DATE"
 OVERLAY_PATH="out/$OVERLAY_NAME"
@@ -147,7 +152,7 @@ cp $GEOCOUCH_HOME/build/*.beam $OVERLAY_PATH/assets/lib/geocouch
 # libs
 mkdir -p $OVERLAY_PATH/libs
 cp -Rdp $COUCHBASE_SERVICE_HOME/bin/couchbase-$1.jar $OVERLAY_PATH/libs/
-cp -Rdp build/deps/otp_rel/lib/jinterface-1.5.4/priv/OtpErlang.jar $OVERLAY_PATH/libs/
+cp -Rdp build/deps/otp_rel/lib/jinterface-1.5.4/priv/OtpErlang.jar $OVERLAY_PATH/libs/OtpErlang-$2.jar
 
 # native libs
 mkdir -p $OVERLAY_PATH/libs/armeabi

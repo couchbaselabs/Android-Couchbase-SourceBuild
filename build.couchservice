@@ -14,6 +14,11 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+if [ -z "$2" ]; then
+    echo "Give me a release number for OTP/Erlang bub!"
+    exit 1
+fi
+
 cd $COUCHBASE_SERVICE_HOME
 
 touch local.properties
@@ -25,4 +30,4 @@ ant -Dsdk.dir=$ANDROID_SDK_ROOT -Dndk.dir=$ANDROID_NDK_ROOT jni
 ant -Dsdk.dir=$ANDROID_SDK_ROOT -Dndk.dir=$ANDROID_NDK_ROOT -Dextensible.libs.classpath=$ERL_HOME/lib/jinterface/priv/ -Dversion=$1 couchbase-jar
 
 # build couchbase scripts
-ant -Dsdk.dir=$ANDROID_SDK_ROOT -Dversion=$1 couchbase-script
+ant -Dsdk.dir=$ANDROID_SDK_ROOT -Dversion=$1 -Dotp.version=$2 couchbase-script
