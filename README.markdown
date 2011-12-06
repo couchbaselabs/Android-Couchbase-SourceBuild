@@ -7,10 +7,11 @@ It is currently aimed to work on Ubuntu 10.10, 11.04 and Debian Squeeze x86 32bi
 
 Dependencies
 ============
-Android SDK - http://developer.android.com/sdk/index.html
-Android NDK - http://developer.android.com/sdk/ndk/index.html
-autoconf 2.13 (required by spidermonkey)
-autoconf 2.59 (required by erlang)
+
+- Android SDK - http://developer.android.com/sdk/index.html
+- Android NDK - http://developer.android.com/sdk/ndk/index.html
+- autoconf 2.13 (required by spidermonkey)
+- autoconf 2.59 (required by erlang)
 
 
 You will also need to create a staging directory for the installation process:
@@ -20,8 +21,9 @@ You will also need to create a staging directory for the installation process:
     sudo chown dale:dale /data
 
 Set environment variables pointing to location of SDK and NDK (or edit scripts/env)
-export ANDROID_NDK_ROOT=...
-export ANDROID_SDK_ROOT=...
+
+    export ANDROID_NDK_ROOT=...
+    export ANDROID_SDK_ROOT=...
 
 Usage
 =====
