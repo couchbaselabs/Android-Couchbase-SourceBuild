@@ -1,17 +1,17 @@
-Building Android CouchDB
+Building Couchbase Mobile for Android
 ========================
 
-These instruction are for building the couchdb android binaries from source, this involved building android, erlang, spidermonkey, couchdb and various libraries from source.
+These instructions are for building Couchbase Mobile for Android binaries from source.  This involves building openssl, spidermonkey, erlang, CouchDB, GeoCouch, and the Couchbase Mobile Android Service from source.
 
-Android requires around 20GB of free space to complete its build.
-
-It is currently aimed to work on Ubuntu 10.10 and Debian Squeeze x86 32bit, other platforms should be possible.
+It is currently aimed to work on Ubuntu 10.10, 11.04 and Debian Squeeze x86 32bit, other platforms should be possible.
 
 Dependencies
 ============
-Compiling android requires the JDK and various system dependancies, you can find these listed @ http://source.android.com/source/initializing.html
+Android SDK - http://developer.android.com/sdk/index.html
+Android NDK - http://developer.android.com/sdk/ndk/index.html
+autoconf 2.13 (required by spidermonkey)
+autoconf 2.59 (required by erlang)
 
-There are step by step instructions for building a the dependancies for Ubuntu 10.10 32bit @ https://github.com/couchbaselabs/build-android-couch/wiki/Building-on-Ubuntu-10.10
 
 You will also need to create a staging directory for the installation process:
 
@@ -19,18 +19,21 @@ You will also need to create a staging directory for the installation process:
     sudo mkdir /data
     sudo chown dale:dale /data
 
+Set environment variables pointing to location of SDK and NDK (or edit scripts/env)
+export ANDROID_NDK_ROOT=...
+export ANDROID_SDK_ROOT=...
+
 Usage
 =====
-    $ git clone git@github.com:daleharvey/build-android-couch.git
-    $ cd build-android-couch
-    $ ./build.android
+    $ ./build.openssl
     $ ./build.resetmz
     $ ./build.nspr
     $ ./build.js
     $ ./build.erlang
     $ ./build.couch
     $ ./build.geocouch
-    $ ./build.final 0.1
+    $ ./build.couchservice 2.0.0-dp r14b03
+    $ ./build.final 2.0.0-dp r14b03
 
 Credits
 =======

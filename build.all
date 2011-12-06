@@ -2,7 +2,17 @@
 # Builds all components but does not finalize the release
 #
 
-for i in openssl resetmz nspr js erlang couch geocouch couchservice
+if [ -z "$1" ]; then
+    echo "Give me a release number bub!"
+    exit 1
+fi
+
+if [ -z "$2" ]; then
+    echo "Give me a release number for OTP/Erlang bub!"
+    exit 1
+fi
+
+for i in openssl resetmz nspr js erlang couch geocouch 
 do
     echo "Now building $i"
     ./build.$i >& build.log.$i
@@ -13,4 +23,11 @@ do
     fi
 done
 
-./build.final 1.0-dp >& build.log.final
+echo "Now building couchservice"
+./build.couchservice $1 $2 >& build.couchservice
+if [[ $? -ne 0 ]]; then
+    echo "Encountered error while building $i, please inspect build.log.$i"
+    exit 1
+fi
+
+./build.final $1 $2 >& build.log.final
