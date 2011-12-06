@@ -149,6 +149,9 @@ cp -Rdp build/deps/otp_rel/lib/xmerl-1.2.9/ebin/xmerl_ucs.beam $OVERLAY_PATH/ass
 mkdir -p $OVERLAY_PATH/assets/lib/geocouch
 cp $GEOCOUCH_HOME/build/*.beam $OVERLAY_PATH/assets/lib/geocouch
 
+# Put a version file into assets
+echo $1 > $OVERLAY_PATH/assets/CouchbaseVersion.txt
+
 # libs
 mkdir -p $OVERLAY_PATH/libs
 cp -Rdp $COUCHBASE_SERVICE_HOME/bin/couchbase-$1.jar $OVERLAY_PATH/libs/
