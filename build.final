@@ -126,6 +126,7 @@ cp -Rdp /data/data/%app_name%/couchdb/lib/couchdb/erlang/lib/ibrowse-2.2.0/ebin 
 mkdir -p $OVERLAY_PATH/assets/lib/inets-5.7/ebin
 cp -Rdp build/deps/otp_rel/lib/inets-5.7/ebin/httpd_util.beam $OVERLAY_PATH/assets/lib/inets-5.7/ebin
 cp -Rdp build/deps/otp_rel/lib/inets-5.7/ebin/inets.app $OVERLAY_PATH/assets/lib/inets-5.7/ebin
+cp -Rdp build/deps/otp_rel/lib/inets-5.7/ebin/http_uri.beam $OVERLAY_PATH/assets/lib/inets-5.7/ebin
 mkdir -p $OVERLAY_PATH/assets/lib/kernel-2.14.5/
 cp -Rdp build/deps/otp_rel/lib/kernel-2.14.5/ebin $OVERLAY_PATH/assets/lib/kernel-2.14.5/ebin
 mkdir -p $OVERLAY_PATH/assets/lib/mochiweb-1.4.1/
